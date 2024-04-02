@@ -6,10 +6,10 @@ import (
 	"log"
 	"time"
 
-	"github.com/leonlatsch/go-resolve/api"
-	"github.com/leonlatsch/go-resolve/config"
-	"github.com/leonlatsch/go-resolve/cron"
-	"github.com/leonlatsch/go-resolve/models"
+	"github.com/leonlatsch/go-resolve/internal/api"
+	"github.com/leonlatsch/go-resolve/internal/config"
+	"github.com/leonlatsch/go-resolve/internal/cron"
+	"github.com/leonlatsch/go-resolve/internal/models"
 )
 
 func main() {

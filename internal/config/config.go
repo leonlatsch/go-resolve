@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/leonlatsch/go-resolve/models"
-	"github.com/leonlatsch/go-resolve/serialization"
+	"github.com/leonlatsch/go-resolve/internal/models"
+	"github.com/leonlatsch/go-resolve/internal/serialization"
 )
 const CONFIG_DIR = "config"
 const CONFIG_FILE = CONFIG_DIR + "/" + "godaddy_config.json" 

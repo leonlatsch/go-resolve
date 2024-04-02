@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/leonlatsch/go-resolve/config"
-	"github.com/leonlatsch/go-resolve/http"
-	"github.com/leonlatsch/go-resolve/models"
-	"github.com/leonlatsch/go-resolve/serialization"
+	"github.com/leonlatsch/go-resolve/internal/config"
+	"github.com/leonlatsch/go-resolve/internal/http"
+	"github.com/leonlatsch/go-resolve/internal/models"
+	"github.com/leonlatsch/go-resolve/internal/serialization"
 )
 
 const BASE_URL = "https://api.godaddy.com/v1"

@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/leonlatsch/go-resolve/serialization"
+	"github.com/leonlatsch/go-resolve/internal/serialization"
 )
 
 var httpClient = &http.Client{}

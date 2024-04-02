@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/leonlatsch/go-resolve/http"
+	"github.com/leonlatsch/go-resolve/internal/http"
 )
 
 // Services to resolve the public ipv4 address.
