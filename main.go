@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"time"
 
@@ -14,6 +15,22 @@ import (
 func main() {
 	log.Println("Starting Application")
 	config.LoadConfig()
+
+    domainDetail, err := api.GetDomainDetail()
+    if err != nil {
+        log.Println("Could not load domain detail for " + config.SharedConfig.Domain)
+        log.Fatalln(err)
+    }
+
+    log.Println(
+        fmt.Sprintf(
+            "Config valid. Running for domain %s maintained by %s %s (%s)",
+            domainDetail.Domain,
+            domainDetail.ContactAdmin.FirstName,
+            domainDetail.ContactAdmin.LastName,
+            domainDetail.ContactAdmin.Email,
+        ),
+    )
 
 	ipChan := observePublicIp()
 	lastIp := ""

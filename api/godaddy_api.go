@@ -20,10 +20,28 @@ func endpointARecords(host string) string {
     return BASE_URL + fmt.Sprintf("/domains/%s/records/A/%s", config.SharedConfig.Domain, host)
 }
 
+func endpointDomainDetail() string {
+    return BASE_URL + fmt.Sprintf("/domains/%s", config.SharedConfig.Domain)
+}
+
 func getAuthHeaders() map[string]string {
     headers := make(map[string]string)
     headers["Authorization"] = "sso-key " + config.SharedConfig.ApiKey + ":" + config.SharedConfig.ApiSecret
     return headers
+}
+
+func GetDomainDetail() (models.DomainDetail, error) {
+    var detail models.DomainDetail
+    json, err := http.GET("", getAuthHeaders())
+    if err != nil {
+        return detail, err
+    }
+
+    if err := serialization.FromJson(json, &detail); err != nil {
+        return detail, err
+    }
+
+    return detail, nil
 }
 
 func GetRecords(host string) ([]models.DnsRecord, error) {
