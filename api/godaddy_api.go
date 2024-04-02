@@ -32,7 +32,7 @@ func getAuthHeaders() map[string]string {
 
 func GetDomainDetail() (models.DomainDetail, error) {
     var detail models.DomainDetail
-    json, err := http.GET("", getAuthHeaders())
+    json, err := http.GET(endpointDomainDetail(), getAuthHeaders())
     if err != nil {
         return detail, err
     }
