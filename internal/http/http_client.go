@@ -2,6 +2,7 @@ package http
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"net/http"
 
@@ -42,6 +43,11 @@ func request(method string, url string, headers map[string]string, body interfac
 	if err != nil {
 		return "", err
 	}
+
+    respOk := resp.StatusCode >= 200 && resp.StatusCode < 300
+    if !respOk {
+        return string(respBody), errors.New(resp.Status)
+    }
 
     return string(respBody), nil
 }

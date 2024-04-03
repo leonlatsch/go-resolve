@@ -13,10 +13,11 @@ import (
 
 type GodaddyService struct {
 	Config models.Config
+    GodaddyApi api.GodaddyApi
 }
 
-func (self *GodaddyService) PrintDomainDetail() {
-	domainDetail, err := api.GetDomainDetail()
+func (self GodaddyService) PrintDomainDetail() {
+	domainDetail, err := self.GodaddyApi.GetDomainDetail()
 	if err != nil {
 		log.Println("Could not load domain detail for " + self.Config.Domain)
 		log.Fatalln(err)
@@ -33,7 +34,7 @@ func (self *GodaddyService) PrintDomainDetail() {
 	)
 }
 
-func (self *GodaddyService) ObserveAndUpdateDns() {
+func (self GodaddyService) ObserveAndUpdateDns() {
     ipChan := self.observePublicIp()
     lastIp := ""
 
@@ -53,11 +54,11 @@ func (self *GodaddyService) ObserveAndUpdateDns() {
     }
 }
 
-func (self *GodaddyService) onIpChanged(ip string) error {
+func (self GodaddyService) onIpChanged(ip string) error {
 	log.Println("Ip changed: " + ip)
 	for _, host := range self.Config.Hosts {
 
-		existingRecords, err := api.GetRecords(host)
+		existingRecords, err := self.GodaddyApi.GetRecords(host)
 		if err != nil {
 			return err
 		}
@@ -70,11 +71,11 @@ func (self *GodaddyService) onIpChanged(ip string) error {
 
 		switch len(existingRecords) {
 		case 0:
-			if err := api.CreateRecord(record); err != nil {
+			if err := self.GodaddyApi.CreateRecord(record); err != nil {
 				return err
 			}
 		case 1:
-			if err := api.UpdateRecord(record); err != nil {
+			if err := self.GodaddyApi.UpdateRecord(record); err != nil {
 				return err
 			}
 		default:
@@ -84,7 +85,7 @@ func (self *GodaddyService) onIpChanged(ip string) error {
 	return nil
 }
 
-func (self *GodaddyService) observePublicIp() chan string {
+func (self GodaddyService) observePublicIp() chan string {
 	ipChan := make(chan string)
 	interval, err := time.ParseDuration(self.Config.Interval)
 	if err != nil {
