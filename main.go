@@ -10,10 +10,10 @@ import (
 
 func main() {
 	log.Println("Starting Application")
-    conf, err:= config.LoadConfig()
-    if err != nil {
-        log.Fatalln(err)
-    }
+	conf, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	godaddyService := service.GodaddyService{
 		Config:     conf,

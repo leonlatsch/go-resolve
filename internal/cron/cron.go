@@ -16,7 +16,7 @@ func Repeat(duration time.Duration, f func()) {
 		f()
 	}
 
-    // Repeat once timer ticks
+	// Repeat once timer ticks
 	for {
 		select {
 		case <-timer.C:

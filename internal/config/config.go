@@ -7,17 +7,18 @@ import (
 	"github.com/leonlatsch/go-resolve/internal/models"
 	"github.com/leonlatsch/go-resolve/internal/serialization"
 )
+
 const CONFIG_DIR = "config"
-const CONFIG_FILE = CONFIG_DIR + "/" + "godaddy_config.json" 
+const CONFIG_FILE = CONFIG_DIR + "/" + "godaddy_config.json"
 const CONFIG_FILE_MODE = 0644
 
 // Loads the config from file and returns it
 func LoadConfig() (models.Config, error) {
-    var config models.Config
+	var config models.Config
 
 	if !configExists() {
 		createEmptyConfig()
-        return config, errors.New("No Config. Creating empty config and exiting.")
+		return config, errors.New("No Config. Creating empty config and exiting.")
 	}
 
 	buf, err := os.ReadFile(CONFIG_FILE)
@@ -39,8 +40,8 @@ func SaveConfig(conf models.Config) error {
 	if err != nil {
 		return err
 	}
-    
-    os.Mkdir(CONFIG_DIR, CONFIG_FILE_MODE)// Ignore err. Just try every time
+
+	os.Mkdir(CONFIG_DIR, CONFIG_FILE_MODE) // Ignore err. Just try every time
 	if err := os.WriteFile(CONFIG_FILE, []byte(confJson), CONFIG_FILE_MODE); err != nil {
 		return err
 	}

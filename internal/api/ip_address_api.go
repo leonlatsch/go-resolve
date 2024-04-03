@@ -15,7 +15,7 @@ var services = []string{
 	"http://ip.42.pl/raw",
 }
 
-type IpApi struct {}
+type IpApi struct{}
 
 func (self IpApi) GetPublicIpAddress() (string, error) {
 	for _, service := range services {
@@ -34,5 +34,5 @@ func getIpFrom(service string) (string, error) {
 		return "", err
 	}
 
-    return strings.TrimSuffix(res, "\n"), nil
+	return strings.TrimSuffix(res, "\n"), nil
 }
