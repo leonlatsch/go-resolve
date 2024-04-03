@@ -10,11 +10,14 @@ import (
 
 func main() {
 	log.Println("Starting Application")
-	config.LoadConfig()
+    conf, err:= config.LoadConfig()
+    if err != nil {
+        log.Fatalln(err)
+    }
 
 	godaddyService := service.GodaddyService{
-		Config:     config.SharedConfig,
-		GodaddyApi: api.GodaddyApi{Config: config.SharedConfig},
+		Config:     conf,
+		GodaddyApi: api.GodaddyApi{Config: conf},
 	}
 
 	godaddyService.PrintDomainDetail()
