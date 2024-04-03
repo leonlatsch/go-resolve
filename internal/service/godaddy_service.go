@@ -12,8 +12,9 @@ import (
 )
 
 type GodaddyService struct {
-	Config models.Config
-    GodaddyApi api.GodaddyApi
+	Config     models.Config
+	GodaddyApi api.GodaddyApi
+	IpApi      api.IpApi
 }
 
 func (self GodaddyService) PrintDomainDetail() {
@@ -35,23 +36,23 @@ func (self GodaddyService) PrintDomainDetail() {
 }
 
 func (self GodaddyService) ObserveAndUpdateDns() {
-    ipChan := self.observePublicIp()
-    lastIp := ""
+	ipChan := self.observePublicIp()
+	lastIp := ""
 
-    for {
-        ip := <- ipChan
+	for {
+		ip := <-ipChan
 
-        if ip == lastIp {
-            continue
-        }
+		if ip == lastIp {
+			continue
+		}
 
-        if err := self.onIpChanged(ip); err != nil {
+		if err := self.onIpChanged(ip); err != nil {
 			log.Println("Successfully updated all records. Caching " + ip)
 			lastIp = ip
-        } else {
-            log.Println(err)
-        }
-    }
+		} else {
+			log.Println(err)
+		}
+	}
 }
 
 func (self GodaddyService) onIpChanged(ip string) error {
@@ -96,7 +97,7 @@ func (self GodaddyService) observePublicIp() chan string {
 	log.Println("Checking for new ip every " + self.Config.Interval)
 
 	go cron.Repeat(interval, func() {
-		currentIp, err := api.GetPublicIpAddress()
+		currentIp, err := self.IpApi.GetPublicIpAddress()
 		if err == nil {
 			ipChan <- currentIp
 		}
