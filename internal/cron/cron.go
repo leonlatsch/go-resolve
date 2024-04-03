@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func RunAndRepeat(duration time.Duration, f func()) {
+func Repeat(duration time.Duration, f func()) {
 	var lock sync.Mutex
 	timer := time.NewTicker(duration)
 	defer timer.Stop()
@@ -15,9 +15,6 @@ func RunAndRepeat(duration time.Duration, f func()) {
 		defer lock.Unlock()
 		f()
 	}
-
-    // Run job directly
-    go job()
 
     // Repeat once timer ticks
 	for {

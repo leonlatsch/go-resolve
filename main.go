@@ -91,7 +91,7 @@ func observePublicIp() chan string {
 	}
 
     log.Println("Checking for new ip every " + config.SharedConfig.Interval)
-	go cron.RunAndRepeat(interval, func() {
+	go cron.Repeat(interval, func() {
 		currentIp, err := api.GetPublicIpAddress()
 		if err == nil {
 			ipChan <- currentIp
