@@ -10,7 +10,7 @@ import (
 
 const CONFIG_DIR = "config"
 const CONFIG_FILE = CONFIG_DIR + "/" + "godaddy_config.json"
-const CONFIG_FILE_MODE = 644
+const CONFIG_FILE_MODE = 0644
 
 // Loads the config from file and returns it
 func LoadConfig() (models.Config, error) {
@@ -66,7 +66,7 @@ func createEmptyConfig() error {
 }
 
 func configExists() bool {
-    _, err := os.Stat(CONFIG_FILE)
+	_, err := os.Stat(CONFIG_FILE)
 
-    return !os.IsNotExist(err)
+	return !os.IsNotExist(err)
 }
