@@ -18,6 +18,7 @@ func main() {
 	godaddyService := service.GodaddyService{
 		Config:     conf,
 		GodaddyApi: api.GodaddyApi{Config: conf},
+        IpApi: api.IpApi{},
 	}
 
 	godaddyService.PrintDomainDetail()
