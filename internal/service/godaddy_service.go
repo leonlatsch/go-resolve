@@ -17,7 +17,7 @@ type GodaddyService struct {
 	IpApi      api.IpApi
 }
 
-func (self GodaddyService) PrintDomainDetail() {
+func (self *GodaddyService) PrintDomainDetail() {
 	domainDetail, err := self.GodaddyApi.GetDomainDetail()
 	if err != nil {
 		log.Println("Could not load domain detail for " + self.Config.Domain)
@@ -35,7 +35,7 @@ func (self GodaddyService) PrintDomainDetail() {
 	)
 }
 
-func (self GodaddyService) ObserveAndUpdateDns() {
+func (self *GodaddyService) ObserveAndUpdateDns() {
 	ipChan := self.observePublicIp()
 	lastIp := ""
 
@@ -46,7 +46,7 @@ func (self GodaddyService) ObserveAndUpdateDns() {
 			continue
 		}
 
-		if err := self.onIpChanged(ip); err != nil {
+		if err := self.onIpChanged(ip); err == nil {
 			log.Println("Successfully updated all records. Caching " + ip)
 			lastIp = ip
 		} else {
@@ -55,7 +55,7 @@ func (self GodaddyService) ObserveAndUpdateDns() {
 	}
 }
 
-func (self GodaddyService) onIpChanged(ip string) error {
+func (self *GodaddyService) onIpChanged(ip string) error {
 	log.Println("Ip changed: " + ip)
 	for _, host := range self.Config.Hosts {
 
@@ -86,7 +86,7 @@ func (self GodaddyService) onIpChanged(ip string) error {
 	return nil
 }
 
-func (self GodaddyService) observePublicIp() chan string {
+func (self *GodaddyService) observePublicIp() chan string {
 	ipChan := make(chan string)
 	interval, err := time.ParseDuration(self.Config.Interval)
 	if err != nil {
