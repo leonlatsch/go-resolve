@@ -15,7 +15,7 @@ type GodaddyApi struct {
 
 const BASE_URL = "https://api.godaddy.com/v1"
 
-func (self GodaddyApi) GetDomainDetail() (models.DomainDetail, error) {
+func (self *GodaddyApi) GetDomainDetail() (models.DomainDetail, error) {
 	var detail models.DomainDetail
 	json, err := http.GET(self.endpointDomainDetail(), self.getAuthHeaders())
 	if err != nil {
@@ -29,7 +29,7 @@ func (self GodaddyApi) GetDomainDetail() (models.DomainDetail, error) {
 	return detail, nil
 }
 
-func (self GodaddyApi) GetRecords(host string) ([]models.DnsRecord, error) {
+func (self *GodaddyApi) GetRecords(host string) ([]models.DnsRecord, error) {
 	var records []models.DnsRecord
 	recordsJson, err := http.GET(self.endpointARecords(host), self.getAuthHeaders())
 
@@ -44,7 +44,7 @@ func (self GodaddyApi) GetRecords(host string) ([]models.DnsRecord, error) {
 	return records, nil
 }
 
-func (self GodaddyApi) CreateRecord(record models.DnsRecord) error {
+func (self *GodaddyApi) CreateRecord(record models.DnsRecord) error {
 	log.Println("Creating " + record.Name + "." + self.Config.Domain + " -> " + record.Data)
 	records := []models.DnsRecord{record}
 
@@ -55,7 +55,7 @@ func (self GodaddyApi) CreateRecord(record models.DnsRecord) error {
 	return nil
 }
 
-func (self GodaddyApi) UpdateRecord(record models.DnsRecord) error {
+func (self *GodaddyApi) UpdateRecord(record models.DnsRecord) error {
 	log.Println("Updating " + record.Name + "." + self.Config.Domain + " -> " + record.Data)
 	records := []models.DnsRecord{record}
 
@@ -66,19 +66,19 @@ func (self GodaddyApi) UpdateRecord(record models.DnsRecord) error {
 	return nil
 }
 
-func (self GodaddyApi) endpointRecords(host string) string {
+func (self *GodaddyApi) endpointRecords(host string) string {
 	return BASE_URL + fmt.Sprintf("/domains/%s/records/%s", self.Config.Domain, host)
 }
 
-func (self GodaddyApi) endpointARecords(host string) string {
+func (self *GodaddyApi) endpointARecords(host string) string {
 	return BASE_URL + fmt.Sprintf("/domains/%s/records/A/%s", self.Config.Domain, host)
 }
 
-func (self GodaddyApi) endpointDomainDetail() string {
+func (self *GodaddyApi) endpointDomainDetail() string {
 	return BASE_URL + fmt.Sprintf("/domains/%s", self.Config.Domain)
 }
 
-func (self GodaddyApi) getAuthHeaders() map[string]string {
+func (self *GodaddyApi) getAuthHeaders() map[string]string {
 	headers := make(map[string]string)
 	headers["Authorization"] = "sso-key " + self.Config.ApiKey + ":" + self.Config.ApiSecret
 	return headers

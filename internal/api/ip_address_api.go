@@ -17,7 +17,7 @@ var services = []string{
 
 type IpApi struct{}
 
-func (self IpApi) GetPublicIpAddress() (string, error) {
+func (self *IpApi) GetPublicIpAddress() (string, error) {
 	for _, service := range services {
 		addr, err := getIpFrom(service)
 		if err == nil && len(addr) != 0 {

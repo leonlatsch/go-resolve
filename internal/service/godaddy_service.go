@@ -15,6 +15,7 @@ type GodaddyService struct {
 	Config     models.Config
 	GodaddyApi api.GodaddyApi
 	IpApi      api.IpApi
+	LastIp     string
 }
 
 func (self *GodaddyService) PrintDomainDetail() {
@@ -37,24 +38,17 @@ func (self *GodaddyService) PrintDomainDetail() {
 
 func (self *GodaddyService) ObserveAndUpdateDns() {
 	ipChan := self.observePublicIp()
-	lastIp := ""
 
 	for {
 		ip := <-ipChan
 
-		if ip == lastIp {
-			continue
-		}
-
-		if err := self.onIpChanged(ip); err == nil {
-			log.Println("Successfully updated all records. Caching " + ip)
-			lastIp = ip
-		} else {
+		if err := self.onIpChanged(ip); err != nil {
 			log.Println(err)
 		}
 	}
 }
 
+// Updates all records defined in Hosts with the new ip
 func (self *GodaddyService) onIpChanged(ip string) error {
 	log.Println("Ip changed: " + ip)
 	for _, host := range self.Config.Hosts {
@@ -83,9 +77,13 @@ func (self *GodaddyService) onIpChanged(ip string) error {
 			return errors.New("Error. Check DNS A records on " + host)
 		}
 	}
+
+	log.Println("Successfully updated all records. Caching " + ip)
 	return nil
 }
 
+// Returns a chan string wich will receive a new value once the public ip has changed.
+// Uses interval from config or 1h
 func (self *GodaddyService) observePublicIp() chan string {
 	ipChan := make(chan string)
 	interval, err := time.ParseDuration(self.Config.Interval)
@@ -98,8 +96,9 @@ func (self *GodaddyService) observePublicIp() chan string {
 
 	go cron.Repeat(interval, func() {
 		currentIp, err := self.IpApi.GetPublicIpAddress()
-		if err == nil {
+		if err == nil && currentIp != self.LastIp {
 			ipChan <- currentIp
+			self.LastIp = currentIp
 		}
 	})
 
