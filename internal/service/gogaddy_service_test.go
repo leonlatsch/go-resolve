@@ -43,20 +43,54 @@ func TestPrintDomainDetails(t *testing.T) {
 	})
 }
 
-func TestObserveAndUpdateDns(t *testing.T) {
-
+func TestOnIpChanged(t *testing.T) {
 	godaddyApiFake := api.GodaddyApiFake{}
+	conf := models.Config{
+		Domain: "mydomain.com",
+		Hosts:  []string{"host1", "host2"},
+	}
 
 	service := service.GodaddyService{
+		Config:     conf,
 		GodaddyApi: &godaddyApiFake,
 		IpApi:      &api.IpApiFake{},
 	}
 
-	t.Run("0 Records existing. Creating all records", func(t *testing.T) {
+	t.Run("OnIpChanged creates new and updates existing record", func(t *testing.T) {
+		godaddyApiFake.ExistingRecords = make(map[string][]models.DnsRecord)
+		godaddyApiFake.ExistingRecords["host1"] = []models.DnsRecord{
+			{
+				Data: "oldIp",
+				Name: "host1",
+				Type: "A",
+			},
+		}
+		godaddyApiFake.ExistingRecords["host2"] = []models.DnsRecord{}
 
-	})
+		// host1 should be updated and host2 should be created
 
-	t.Run("Create 1 record and update the other", func(t *testing.T) {
+		newIp := "123.123.123.123"
+		service.OnIpChanged(newIp)
 
+		expectedUpdatedRecord := models.DnsRecord{
+			Data: newIp,
+			Name: "host1",
+			Type: "A",
+		}
+		expectedCreatedRecord := models.DnsRecord{
+			Data: newIp,
+			Name: "host2",
+			Type: "A",
+		}
+
+		if godaddyApiFake.UpdateRecordCalledWith != expectedUpdatedRecord {
+			t.Error("Updated record did not match expected")
+		}
+		if godaddyApiFake.CreateRecordCalledWith != expectedCreatedRecord {
+			t.Error("Created record did not match expected")
+		}
+		if service.LastIp != newIp {
+			t.Error("New ip was not cached")
+		}
 	})
 }

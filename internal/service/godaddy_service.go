@@ -42,12 +42,12 @@ func (self *GodaddyService) ObserveAndUpdateDns() {
 
 	for {
 		ip := <-ipChan
-		self.onIpChanged(ip)
+		self.OnIpChanged(ip)
 	}
 }
 
 // Updates all records defined in Hosts with the new ip
-func (self *GodaddyService) onIpChanged(ip string) {
+func (self *GodaddyService) OnIpChanged(ip string) {
 	log.Println("Ip changed: " + ip)
 	failed := 0
 

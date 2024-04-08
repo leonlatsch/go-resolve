@@ -4,7 +4,7 @@ import "github.com/leonlatsch/go-resolve/internal/models"
 
 type GodaddyApiFake struct {
 	DomainDetail    models.DomainDetail
-	ExistingRecords []models.DnsRecord
+	ExistingRecords map[string][]models.DnsRecord
 	Error           error
 
 	CreateRecordCalledWith models.DnsRecord
@@ -16,7 +16,7 @@ func (self *GodaddyApiFake) GetDomainDetail() (models.DomainDetail, error) {
 }
 
 func (self *GodaddyApiFake) GetRecords(host string) ([]models.DnsRecord, error) {
-	return self.ExistingRecords, self.Error
+	return self.ExistingRecords[host], self.Error
 }
 
 func (self *GodaddyApiFake) CreateRecord(record models.DnsRecord) error {
