@@ -18,11 +18,11 @@ type GodaddyService struct {
 	LastIp     string
 }
 
-func (self *GodaddyService) PrintDomainDetail() {
+func (self *GodaddyService) PrintDomainDetail() error {
 	domainDetail, err := self.GodaddyApi.GetDomainDetail()
 	if err != nil {
 		log.Println("Could not load domain detail for " + self.Config.Domain)
-		log.Fatalln(err)
+		return err
 	}
 
 	log.Println(
@@ -34,6 +34,8 @@ func (self *GodaddyService) PrintDomainDetail() {
 			domainDetail.ContactAdmin.Email,
 		),
 	)
+
+	return nil
 }
 
 func (self *GodaddyService) ObserveAndUpdateDns() {

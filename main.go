@@ -23,6 +23,8 @@ func main() {
 		IpApi:      api.IpApi{HttpClient: &httpClient},
 	}
 
-	godaddyService.PrintDomainDetail()
+	if err := godaddyService.PrintDomainDetail(); err != nil {
+		log.Fatalln(err)
+	}
 	godaddyService.ObserveAndUpdateDns()
 }
