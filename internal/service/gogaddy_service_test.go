@@ -15,7 +15,7 @@ func TestPrintDomainDetails(t *testing.T) {
 	fakeHttpClient := http.FakeHttpClient{}
 
 	service := service.GodaddyService{
-		GodaddyApi: api.GodaddyApi{
+		GodaddyApi: api.GodaddyApiImpl{
 			HttpClient: &fakeHttpClient,
 		},
 	}

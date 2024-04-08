@@ -19,8 +19,8 @@ func main() {
 	httpClient := http.RealHttpClient{}
 	godaddyService := service.GodaddyService{
 		Config:     conf,
-		GodaddyApi: api.GodaddyApi{Config: conf, HttpClient: &httpClient},
-		IpApi:      api.IpApi{HttpClient: &httpClient},
+		GodaddyApi: &api.GodaddyApiImpl{Config: conf, HttpClient: &httpClient},
+		IpApi:      &api.IpApiImpl{HttpClient: &httpClient},
 	}
 
 	if err := godaddyService.PrintDomainDetail(); err != nil {

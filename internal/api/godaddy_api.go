@@ -9,14 +9,21 @@ import (
 	"github.com/leonlatsch/go-resolve/internal/serialization"
 )
 
-type GodaddyApi struct {
+type GodaddyApi interface {
+	GetDomainDetail() (models.DomainDetail, error)
+	GetRecords(host string) ([]models.DnsRecord, error)
+	CreateRecord(record models.DnsRecord) error
+	UpdateRecord(record models.DnsRecord) error
+}
+
+type GodaddyApiImpl struct {
 	Config     models.Config
 	HttpClient http.HttpClient
 }
 
 const BASE_URL = "https://api.godaddy.com/v1"
 
-func (self *GodaddyApi) GetDomainDetail() (models.DomainDetail, error) {
+func (self *GodaddyApiImpl) GetDomainDetail() (models.DomainDetail, error) {
 	var detail models.DomainDetail
 	json, err := self.HttpClient.Get(self.endpointDomainDetail(), self.getAuthHeaders())
 	if err != nil {
@@ -30,7 +37,7 @@ func (self *GodaddyApi) GetDomainDetail() (models.DomainDetail, error) {
 	return detail, nil
 }
 
-func (self *GodaddyApi) GetRecords(host string) ([]models.DnsRecord, error) {
+func (self *GodaddyApiImpl) GetRecords(host string) ([]models.DnsRecord, error) {
 	var records []models.DnsRecord
 	recordsJson, err := self.HttpClient.Get(self.endpointARecords(host), self.getAuthHeaders())
 
@@ -45,7 +52,7 @@ func (self *GodaddyApi) GetRecords(host string) ([]models.DnsRecord, error) {
 	return records, nil
 }
 
-func (self *GodaddyApi) CreateRecord(record models.DnsRecord) error {
+func (self *GodaddyApiImpl) CreateRecord(record models.DnsRecord) error {
 	log.Println("Creating " + record.Name + "." + self.Config.Domain + " -> " + record.Data)
 	records := []models.DnsRecord{record}
 
@@ -56,7 +63,7 @@ func (self *GodaddyApi) CreateRecord(record models.DnsRecord) error {
 	return nil
 }
 
-func (self *GodaddyApi) UpdateRecord(record models.DnsRecord) error {
+func (self *GodaddyApiImpl) UpdateRecord(record models.DnsRecord) error {
 	log.Println("Updating " + record.Name + "." + self.Config.Domain + " -> " + record.Data)
 	records := []models.DnsRecord{record}
 
@@ -67,19 +74,19 @@ func (self *GodaddyApi) UpdateRecord(record models.DnsRecord) error {
 	return nil
 }
 
-func (self *GodaddyApi) endpointRecords(host string) string {
+func (self *GodaddyApiImpl) endpointRecords(host string) string {
 	return BASE_URL + fmt.Sprintf("/domains/%s/records/%s", self.Config.Domain, host)
 }
 
-func (self *GodaddyApi) endpointARecords(host string) string {
+func (self *GodaddyApiImpl) endpointARecords(host string) string {
 	return BASE_URL + fmt.Sprintf("/domains/%s/records/A/%s", self.Config.Domain, host)
 }
 
-func (self *GodaddyApi) endpointDomainDetail() string {
+func (self *GodaddyApiImpl) endpointDomainDetail() string {
 	return BASE_URL + fmt.Sprintf("/domains/%s", self.Config.Domain)
 }
 
-func (self *GodaddyApi) getAuthHeaders() map[string]string {
+func (self *GodaddyApiImpl) getAuthHeaders() map[string]string {
 	headers := make(map[string]string)
 	headers["Authorization"] = "sso-key " + self.Config.ApiKey + ":" + self.Config.ApiSecret
 	return headers
