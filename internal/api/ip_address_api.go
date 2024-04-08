@@ -15,11 +15,13 @@ var services = []string{
 	"http://ip.42.pl/raw",
 }
 
-type IpApi struct{}
+type IpApi struct {
+	HttpClient http.HttpClient
+}
 
 func (self *IpApi) GetPublicIpAddress() (string, error) {
 	for _, service := range services {
-		addr, err := getIpFrom(service)
+		addr, err := self.getIpFrom(service)
 		if err == nil && len(addr) != 0 {
 			return addr, nil
 		}
@@ -28,8 +30,8 @@ func (self *IpApi) GetPublicIpAddress() (string, error) {
 	return "", errors.New("Could not obtain public ip")
 }
 
-func getIpFrom(service string) (string, error) {
-	res, err := http.GET(service, nil)
+func (self *IpApi) getIpFrom(service string) (string, error) {
+	res, err := self.HttpClient.Get(service, nil)
 	if err != nil {
 		return "", err
 	}

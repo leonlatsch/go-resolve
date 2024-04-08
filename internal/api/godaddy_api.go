@@ -10,14 +10,15 @@ import (
 )
 
 type GodaddyApi struct {
-	Config models.Config
+	Config     models.Config
+	HttpClient http.HttpClient
 }
 
 const BASE_URL = "https://api.godaddy.com/v1"
 
 func (self *GodaddyApi) GetDomainDetail() (models.DomainDetail, error) {
 	var detail models.DomainDetail
-	json, err := http.GET(self.endpointDomainDetail(), self.getAuthHeaders())
+	json, err := self.HttpClient.Get(self.endpointDomainDetail(), self.getAuthHeaders())
 	if err != nil {
 		return detail, err
 	}
@@ -31,7 +32,7 @@ func (self *GodaddyApi) GetDomainDetail() (models.DomainDetail, error) {
 
 func (self *GodaddyApi) GetRecords(host string) ([]models.DnsRecord, error) {
 	var records []models.DnsRecord
-	recordsJson, err := http.GET(self.endpointARecords(host), self.getAuthHeaders())
+	recordsJson, err := self.HttpClient.Get(self.endpointARecords(host), self.getAuthHeaders())
 
 	if err != nil {
 		return records, err
@@ -48,7 +49,7 @@ func (self *GodaddyApi) CreateRecord(record models.DnsRecord) error {
 	log.Println("Creating " + record.Name + "." + self.Config.Domain + " -> " + record.Data)
 	records := []models.DnsRecord{record}
 
-	if _, err := http.PATCH(self.endpointRecords(""), self.getAuthHeaders(), records); err != nil {
+	if _, err := self.HttpClient.Patch(self.endpointRecords(""), self.getAuthHeaders(), records); err != nil {
 		return err
 	}
 
@@ -59,7 +60,7 @@ func (self *GodaddyApi) UpdateRecord(record models.DnsRecord) error {
 	log.Println("Updating " + record.Name + "." + self.Config.Domain + " -> " + record.Data)
 	records := []models.DnsRecord{record}
 
-	if _, err := http.PUT(self.endpointARecords(record.Name), self.getAuthHeaders(), records); err != nil {
+	if _, err := self.HttpClient.Put(self.endpointARecords(record.Name), self.getAuthHeaders(), records); err != nil {
 		return err
 	}
 
