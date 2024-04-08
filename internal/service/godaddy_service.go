@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -43,21 +42,22 @@ func (self *GodaddyService) ObserveAndUpdateDns() {
 
 	for {
 		ip := <-ipChan
-
-		if err := self.onIpChanged(ip); err != nil {
-			log.Println(err)
-		}
+		self.onIpChanged(ip)
 	}
 }
 
 // Updates all records defined in Hosts with the new ip
-func (self *GodaddyService) onIpChanged(ip string) error {
+func (self *GodaddyService) onIpChanged(ip string) {
 	log.Println("Ip changed: " + ip)
+	failed := 0
+
 	for _, host := range self.Config.Hosts {
 
 		existingRecords, err := self.GodaddyApi.GetRecords(host)
 		if err != nil {
-			return err
+			log.Println(err)
+			failed++
+			continue
 		}
 
 		record := models.DnsRecord{
@@ -69,19 +69,30 @@ func (self *GodaddyService) onIpChanged(ip string) error {
 		switch len(existingRecords) {
 		case 0:
 			if err := self.GodaddyApi.CreateRecord(record); err != nil {
-				return err
+				log.Println(err)
+				failed++
+				continue
 			}
 		case 1:
 			if err := self.GodaddyApi.UpdateRecord(record); err != nil {
-				return err
+				log.Println(err)
+				failed++
+				continue
 			}
 		default:
-			return errors.New("Error. Check DNS A records on " + host)
+			log.Println("Error. Check DNS A records on " + host)
+			failed++
+			continue
 		}
 	}
 
+	if failed > 0 {
+		log.Println("Some updates failed. Not caching ip")
+		return
+	}
+
 	log.Println("Successfully updated all records. Caching " + ip)
-	return nil
+	self.LastIp = ip
 }
 
 // Returns a chan string wich will receive a new value once the public ip has changed.
@@ -100,7 +111,6 @@ func (self *GodaddyService) observePublicIp() chan string {
 		currentIp, err := self.IpApi.GetPublicIpAddress()
 		if err == nil && currentIp != self.LastIp {
 			ipChan <- currentIp
-			self.LastIp = currentIp
 		}
 	})
 

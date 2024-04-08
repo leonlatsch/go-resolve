@@ -52,14 +52,11 @@ func TestObserveAndUpdateDns(t *testing.T) {
 		IpApi:      &api.IpApiFake{},
 	}
 
-	fakeRecords := []models.DnsRecord{
-		{
-			Data: "someIp",
-			Name: "someName",
-			Type: "A",
-		},
-	}
+	t.Run("0 Records existing. Creating all records", func(t *testing.T) {
 
-	godaddyApiFake.ExistingRecords = fakeRecords
-	godaddyApiFake.Error = nil
+	})
+
+	t.Run("Create 1 record and update the other", func(t *testing.T) {
+
+	})
 }
