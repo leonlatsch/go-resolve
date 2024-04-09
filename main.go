@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/gin-gonic/gin"
 	"github.com/leonlatsch/go-resolve/internal/api"
 	"github.com/leonlatsch/go-resolve/internal/config"
 	"github.com/leonlatsch/go-resolve/internal/http"
@@ -26,5 +27,18 @@ func main() {
 	if err := godaddyService.PrintDomainDetail(); err != nil {
 		log.Fatalln(err)
 	}
-	godaddyService.ObserveAndUpdateDns()
+	go godaddyService.ObserveAndUpdateDns()
+
+	serve(&godaddyService)
+}
+
+func serve(godaddyService *service.GodaddyService) {
+	r := gin.Default()
+
+	r.POST("/api/v1/ip", func(ctx *gin.Context) {
+		ip := ctx.Query("newIp")
+		godaddyService.OnIpChanged(ip)
+	})
+
+	r.Run(":4000")
 }
