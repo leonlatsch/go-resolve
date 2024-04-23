@@ -11,7 +11,7 @@ import (
 )
 
 type GodaddyService struct {
-	Config     models.Config
+	Config     *models.Config
 	GodaddyApi api.GodaddyApi
 	IpApi      api.IpApi
 	LastIp     string

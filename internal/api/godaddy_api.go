@@ -17,7 +17,7 @@ type GodaddyApi interface {
 }
 
 type GodaddyApiImpl struct {
-	Config     models.Config
+	Config     *models.Config
 	HttpClient http.HttpClient
 }
 
