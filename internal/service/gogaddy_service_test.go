@@ -13,8 +13,10 @@ func TestPrintDomainDetails(t *testing.T) {
 	godaddyApiFake := api.GodaddyApiFake{}
 
 	service := service.GodaddyService{
+		Config:     &models.Config{},
 		GodaddyApi: &godaddyApiFake,
 		IpApi:      &api.IpApiFake{},
+		LastIp:     "",
 	}
 
 	t.Run("Get domain details does not crash with correct json response", func(t *testing.T) {
@@ -51,7 +53,7 @@ func TestOnIpChanged(t *testing.T) {
 	}
 
 	service := service.GodaddyService{
-		Config:     conf,
+		Config:     &conf,
 		GodaddyApi: &godaddyApiFake,
 		IpApi:      &api.IpApiFake{},
 	}
