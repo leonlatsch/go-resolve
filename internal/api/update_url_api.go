@@ -18,6 +18,7 @@ type UpdateUrlApiImpl struct {
 
 func (self *UpdateUrlApiImpl) CallUpdateUrl(host string) error {
 	url := strings.ReplaceAll(self.Config.UpdateUrl, "<host>", host)
+	url = strings.ReplaceAll(url, "<domain>", self.Config.Domain)
 	_, err := self.HttpClient.Get(url, nil)
 	if err != nil {
 		return err
