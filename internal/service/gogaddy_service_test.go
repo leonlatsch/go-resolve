@@ -73,7 +73,7 @@ func TestOnIpChanged(t *testing.T) {
 		// host1 should be updated and host2 should be created
 
 		newIp := "123.123.123.123"
-		service.OnIpChanged(newIp)
+		service.UpdateDns(newIp)
 
 		expectedUpdatedRecord := models.DnsRecord{
 			Data: newIp,
