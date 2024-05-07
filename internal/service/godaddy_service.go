@@ -36,13 +36,14 @@ func (self *GodaddyService) PrintDomainDetail() error {
 }
 
 func (self *GodaddyService) ObserveAndUpdateDns() {
+	log.Println("Running for godaddy")
 	self.IpObserver.ObserveIp(func(ip string) {
-		self.OnIpChanged(ip)
+		self.UpdateDns(ip)
 	})
 }
 
 // Updates all records defined in Hosts with the new ip
-func (self *GodaddyService) OnIpChanged(ip string) {
+func (self *GodaddyService) UpdateDns(ip string) {
 	log.Println("Ip changed: " + ip)
 	failed := 0
 

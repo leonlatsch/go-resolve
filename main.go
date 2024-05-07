@@ -19,28 +19,30 @@ func main() {
 
 	httpClient := http.RealHttpClient{}
 
-	if conf.UpdateUrl == "" {
-		startGodaddyMode(&conf, &httpClient)
-	} else {
-		startUpdateUrlMode(&conf, &httpClient)
-	}
+	service := createService(&conf, &httpClient)
+	service.ObserveAndUpdateDns()
 
 }
 
-func startUpdateUrlMode(conf *models.Config, httpClient http.HttpClient) {
-	updateUrlService := service.UpdateUrlService{
-		Config:       conf,
-		UpdateUrlApi: &api.UpdateUrlApiImpl{Config: conf, HttpClient: httpClient},
-		IpObserver: service.IpObserver{
-			IpApi:  &api.IpApiImpl{HttpClient: httpClient},
-			Config: conf,
-		},
-	}
-
-	updateUrlService.ObserveAndUpdateDns()
+func startJobMode(service service.DnsModeService) {
+	service.ObserveAndUpdateDns()
 }
 
-func startGodaddyMode(conf *models.Config, httpClient http.HttpClient) {
+func createService(conf *models.Config, httpClient http.HttpClient) service.DnsModeService {
+	if conf.UpdateUrl != "" {
+		updateUrlService := service.UpdateUrlService{
+			Config:       conf,
+			UpdateUrlApi: &api.UpdateUrlApiImpl{Config: conf, HttpClient: httpClient},
+			IpObserver: service.IpObserver{
+				IpApi:  &api.IpApiImpl{HttpClient: httpClient},
+				Config: conf,
+			},
+		}
+
+		return &updateUrlService
+
+	}
+
 	godaddyService := service.GodaddyService{
 		Config:     conf,
 		GodaddyApi: &api.GodaddyApiImpl{Config: conf, HttpClient: httpClient},
@@ -54,5 +56,5 @@ func startGodaddyMode(conf *models.Config, httpClient http.HttpClient) {
 		log.Fatalln(err)
 	}
 
-	godaddyService.ObserveAndUpdateDns()
+	return &godaddyService
 }

@@ -14,12 +14,13 @@ type UpdateUrlService struct {
 }
 
 func (self *UpdateUrlService) ObserveAndUpdateDns() {
-    self.IpObserver.ObserveIp(func(ip string) {
-        self.OnIpChanged()
-    })
+    log.Println("Running for update url")
+	self.IpObserver.ObserveIp(func(ip string) {
+		self.UpdateDns(ip)
+	})
 }
 
-func (self *UpdateUrlService) OnIpChanged() {
+func (self *UpdateUrlService) UpdateDns(ip string) {
 	for _, host := range self.Config.Hosts {
 		if err := self.UpdateUrlApi.CallUpdateUrl(host); err != nil {
 			log.Println("Could not update via url for host " + host)
