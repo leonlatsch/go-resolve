@@ -11,12 +11,13 @@ import (
 
 func TestPrintDomainDetails(t *testing.T) {
 	godaddyApiFake := api.GodaddyApiFake{}
+	ipOpserver := service.IpObserver{}
 
 	service := service.GodaddyService{
 		Config:     &models.Config{},
 		GodaddyApi: &godaddyApiFake,
 		IpApi:      &api.IpApiFake{},
-		LastIp:     "",
+		IpObserver: ipOpserver,
 	}
 
 	t.Run("Get domain details does not crash with correct json response", func(t *testing.T) {
@@ -91,7 +92,7 @@ func TestOnIpChanged(t *testing.T) {
 		if godaddyApiFake.CreateRecordCalledWith != expectedCreatedRecord {
 			t.Error("Created record did not match expected")
 		}
-		if service.LastIp != newIp {
+		if service.IpObserver.LastIp != newIp {
 			t.Error("New ip was not cached")
 		}
 	})

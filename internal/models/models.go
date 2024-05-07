@@ -6,4 +6,5 @@ type Config struct {
 	Domain    string   `json:"domain"`
 	Hosts     []string `json:"hosts"`
 	Interval  string   `json:"interval"`
+	UpdateUrl string   `json:"updateUrl"`
 }

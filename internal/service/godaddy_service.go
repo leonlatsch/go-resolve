@@ -3,10 +3,8 @@ package service
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/leonlatsch/go-resolve/internal/api"
-	"github.com/leonlatsch/go-resolve/internal/cron"
 	"github.com/leonlatsch/go-resolve/internal/models"
 )
 
@@ -14,7 +12,7 @@ type GodaddyService struct {
 	Config     *models.Config
 	GodaddyApi api.GodaddyApi
 	IpApi      api.IpApi
-	LastIp     string
+	IpObserver IpObserver
 }
 
 func (self *GodaddyService) PrintDomainDetail() error {
@@ -38,12 +36,9 @@ func (self *GodaddyService) PrintDomainDetail() error {
 }
 
 func (self *GodaddyService) ObserveAndUpdateDns() {
-	ipChan := self.observePublicIp()
-
-	for {
-		ip := <-ipChan
+	self.IpObserver.ObserveIp(func(ip string) {
 		self.OnIpChanged(ip)
-	}
+	})
 }
 
 // Updates all records defined in Hosts with the new ip
@@ -92,27 +87,5 @@ func (self *GodaddyService) OnIpChanged(ip string) {
 	}
 
 	log.Println("Successfully updated all records. Caching " + ip)
-	self.LastIp = ip
-}
-
-// Returns a chan string wich will receive a new value once the public ip has changed.
-// Uses interval from config or 1h
-func (self *GodaddyService) observePublicIp() chan string {
-	ipChan := make(chan string)
-	interval, err := time.ParseDuration(self.Config.Interval)
-	if err != nil {
-		log.Println("Could not read retry interval from config. Using fallback 1h")
-		interval = time.Hour
-	}
-
-	log.Println("Checking for new ip every " + self.Config.Interval)
-
-	go cron.Repeat(interval, func() {
-		currentIp, err := self.IpApi.GetPublicIpAddress()
-		if err == nil && currentIp != self.LastIp {
-			ipChan <- currentIp
-		}
-	})
-
-	return ipChan
+	self.IpObserver.LastIp = ip
 }
