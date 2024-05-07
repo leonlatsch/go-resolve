@@ -26,7 +26,9 @@ func main() {
 	case "JOB":
 		service.ObserveAndUpdateDns()
 	case "SERVER":
-		server := server.Server{}
+		server := server.Server{
+			Service: service,
+		}
 		server.StartApiServer()
 	}
 }
