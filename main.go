@@ -7,6 +7,7 @@ import (
 	"github.com/leonlatsch/go-resolve/internal/config"
 	"github.com/leonlatsch/go-resolve/internal/http"
 	"github.com/leonlatsch/go-resolve/internal/models"
+	"github.com/leonlatsch/go-resolve/internal/server"
 	"github.com/leonlatsch/go-resolve/internal/service"
 )
 
@@ -20,8 +21,14 @@ func main() {
 	httpClient := http.RealHttpClient{}
 
 	service := createService(&conf, &httpClient)
-	service.ObserveAndUpdateDns()
 
+	switch conf.Mode {
+	case "JOB":
+		service.ObserveAndUpdateDns()
+	case "SERVER":
+		server := server.Server{}
+		server.StartApiServer()
+	}
 }
 
 func createService(conf *models.Config, httpClient http.HttpClient) service.DnsModeService {

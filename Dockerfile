@@ -28,5 +28,6 @@ RUN mkdir config
 COPY --from=builder build/app .
 
 # Exec built binary
+RUN export GIN_MODE=release
 CMD ./app
 
