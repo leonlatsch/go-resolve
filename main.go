@@ -24,10 +24,6 @@ func main() {
 
 }
 
-func startJobMode(service service.DnsModeService) {
-	service.ObserveAndUpdateDns()
-}
-
 func createService(conf *models.Config, httpClient http.HttpClient) service.DnsModeService {
 	if conf.UpdateUrl != "" {
 		updateUrlService := service.UpdateUrlService{
