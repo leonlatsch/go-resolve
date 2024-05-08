@@ -14,7 +14,7 @@ func (self *Server) StartApiServer() {
 
 	router.GET("/update", func(ctx *gin.Context) {
 		ip := ctx.Query("ip")
-		self.Service.UpdateDns(ip)
+		go self.Service.UpdateDns(ip)
 		ctx.Status(200)
 	})
 
