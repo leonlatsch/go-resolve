@@ -26,8 +26,11 @@ RUN mkdir config
 
 # Copy built binary from builder
 COPY --from=builder build/app .
+ENV GIN_MODE release
+
+# Expose API port
+EXPOSE 9991
 
 # Exec built binary
-RUN export GIN_MODE=release
 CMD ./app
 
