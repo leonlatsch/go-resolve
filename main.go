@@ -13,14 +13,14 @@ import (
 
 func main() {
 	log.Println("Starting Application")
-	conf, err := config.LoadConfig()
+	conf, err := config.GetConfig()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	httpClient := http.RealHttpClient{}
 
-	service := createService(&conf, &httpClient)
+	service := createService(conf, &httpClient)
 
 	switch conf.Mode {
 	case "JOB":

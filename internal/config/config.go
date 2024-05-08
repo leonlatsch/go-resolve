@@ -2,8 +2,11 @@ package config
 
 import (
 	"errors"
+	"log"
 	"os"
+	"strings"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/leonlatsch/go-resolve/internal/models"
 	"github.com/leonlatsch/go-resolve/internal/serialization"
 )
@@ -12,26 +15,23 @@ const CONFIG_DIR = "config"
 const CONFIG_FILE = CONFIG_DIR + "/" + "godaddy_config.json"
 const CONFIG_FILE_MODE = 0644
 
-// Loads the config from file and returns it
-func LoadConfig() (models.Config, error) {
-	var config models.Config
-
+// Get the config as pointer. Value updates when file changes
+func GetConfig() (*models.Config, error) {
 	if !configExists() {
 		createEmptyConfig()
-		return config, errors.New("No Config. Creating empty config and exiting.")
+		return nil, errors.New("No Config. Creating empty config and exiting.")
 	}
 
-	buf, err := os.ReadFile(CONFIG_FILE)
-
+	config, err := loadConfig()
 	if err != nil {
-		return config, err
+		return nil, err
 	}
 
-	if err := serialization.FromJson(string(buf), &config); err != nil {
-		return config, err
-	}
+	observeConfigFile(func(c models.Config) {
+		config = c
+	})
 
-	return config, nil
+	return &config, nil
 }
 
 // Saves SharedConfig to File and applies it to SharedConfig
@@ -47,6 +47,22 @@ func SaveConfig(conf models.Config) error {
 	}
 
 	return nil
+}
+
+// Loads the config from file and returns it
+func loadConfig() (models.Config, error) {
+	var config models.Config
+	buf, err := os.ReadFile(CONFIG_FILE)
+
+	if err != nil {
+		return config, err
+	}
+
+	if err := serialization.FromJson(string(buf), &config); err != nil {
+		return config, err
+	}
+
+	return config, nil
 }
 
 func createEmptyConfig() error {
@@ -70,4 +86,38 @@ func configExists() bool {
 	_, err := os.Stat(CONFIG_FILE)
 
 	return !os.IsNotExist(err)
+}
+
+func observeConfigFile(onChange func(models.Config)) {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	if err := watcher.Add(CONFIG_DIR); err != nil {
+		log.Println(err)
+		return
+	}
+
+	go func() {
+		defer watcher.Close()
+
+		for {
+			e := <-watcher.Events
+			if !strings.HasSuffix(e.Name, CONFIG_FILE) {
+				continue
+			}
+
+			log.Println(e.Name + " has changed. Reloading")
+
+			newConf, err := loadConfig()
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+
+			onChange(newConf)
+		}
+	}()
 }
