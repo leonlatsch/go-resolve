@@ -88,6 +88,6 @@ func (self *GodaddyApiImpl) endpointDomainDetail() string {
 
 func (self *GodaddyApiImpl) getAuthHeaders() map[string]string {
 	headers := make(map[string]string)
-	headers["Authorization"] = "sso-key " + self.Config.ApiKey + ":" + self.Config.ApiSecret
+	headers["Authorization"] = "sso-key " + self.Config.GoDaddyConfig.ApiKey + ":" + self.Config.GoDaddyConfig.ApiSecret
 	return headers
 }

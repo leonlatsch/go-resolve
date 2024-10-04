@@ -14,7 +14,7 @@ type UpdateUrlService struct {
 }
 
 func (self *UpdateUrlService) ObserveAndUpdateDns() {
-    log.Println("Running for update url")
+	log.Println("Running for update url")
 	self.IpObserver.ObserveIp(func(ip string) {
 		self.UpdateDns(ip)
 	})

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"log"
 
 	"github.com/leonlatsch/go-resolve/internal/api"
@@ -19,13 +20,16 @@ func main() {
 
 	httpClient := http.RealHttpClient{}
 
-	service := createService(conf, &httpClient)
+	service, err := createService(conf, &httpClient)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	service.ObserveAndUpdateDns()
 }
 
-func createService(conf *models.Config, httpClient http.HttpClient) service.DnsModeService {
-	if conf.UpdateUrl != "" {
+func createService(conf *models.Config, httpClient http.HttpClient) (service.DnsModeService, error) {
+	if conf.Provider == models.ProviderUpdateUrl {
 		updateUrlService := service.UpdateUrlService{
 			Config:       conf,
 			UpdateUrlApi: &api.UpdateUrlApiImpl{Config: conf, HttpClient: httpClient},
@@ -35,22 +39,28 @@ func createService(conf *models.Config, httpClient http.HttpClient) service.DnsM
 			},
 		}
 
-		return &updateUrlService
+		return &updateUrlService, nil
 
 	}
 
-	godaddyService := service.GodaddyService{
-		Config:     conf,
-		GodaddyApi: &api.GodaddyApiImpl{Config: conf, HttpClient: httpClient},
-		IpObserver: service.IpObserver{
-			IpApi:  &api.IpApiImpl{HttpClient: httpClient},
-			Config: conf,
-		},
+	if conf.Provider == models.ProviderGoDaddy {
+
+		godaddyService := service.GodaddyService{
+			Config:     conf,
+			GodaddyApi: &api.GodaddyApiImpl{Config: conf, HttpClient: httpClient},
+			IpObserver: service.IpObserver{
+				IpApi:  &api.IpApiImpl{HttpClient: httpClient},
+				Config: conf,
+			},
+		}
+
+		if err := godaddyService.PrintDomainDetail(); err != nil {
+			log.Fatalln(err)
+		}
+
+		return &godaddyService, nil
+
 	}
 
-	if err := godaddyService.PrintDomainDetail(); err != nil {
-		log.Fatalln(err)
-	}
-
-	return &godaddyService
+	return nil, errors.New("No service for configured provider")
 }

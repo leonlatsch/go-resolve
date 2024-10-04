@@ -12,7 +12,7 @@ import (
 )
 
 const CONFIG_DIR = "config"
-const CONFIG_FILE = CONFIG_DIR + "/" + "godaddy_config.json"
+const CONFIG_FILE = CONFIG_DIR + "/" + "config.json"
 const CONFIG_FILE_MODE = 0644
 
 // Get the config as pointer. Value updates when file changes
@@ -66,15 +66,7 @@ func loadConfig() (models.Config, error) {
 }
 
 func createEmptyConfig() error {
-	newEmptyConfig := models.Config{
-		ApiKey:    "GODADDY_API_KEY",
-		ApiSecret: "GODADDY_API_SECRET",
-		Domain:    "YOUR_DOMAIN",
-		Hosts:     []string{"HOST1", "HOST2"},
-		Interval:  "1h",
-	}
-
-	if err := SaveConfig(newEmptyConfig); err != nil {
+	if err := SaveConfig(models.EmptyConfig); err != nil {
 		return err
 	}
 
