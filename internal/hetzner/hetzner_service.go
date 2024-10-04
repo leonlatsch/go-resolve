@@ -18,7 +18,7 @@ type HetznerService struct {
 }
 
 func (service *HetznerService) PreloadRecordIds() error {
-	var recordIds map[string]RecordId
+	recordIds := make(map[string]RecordId)
 
 	records, err := service.HetznerApi.GetRecords()
 	if err != nil {
@@ -73,6 +73,7 @@ func (service *HetznerService) UpdateDns(ip string) {
 	log.Println(fmt.Sprintf("Updating %v records for %v", len(records), service.Config.Domain))
 	if err := service.HetznerApi.BulkUpdate(records); err != nil {
 		log.Println("Bulk update failed. Not caching ip")
+		log.Println(err)
 		return
 	}
 
