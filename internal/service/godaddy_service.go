@@ -12,7 +12,7 @@ type GodaddyService struct {
 	Config     *models.Config
 	GodaddyApi api.GodaddyApi
 	IpApi      api.IpApi
-	IpObserver IpObserver
+	IpObserver IpObserverService
 }
 
 func (self *GodaddyService) PrintDomainDetail() error {

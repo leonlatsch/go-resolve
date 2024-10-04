@@ -9,13 +9,13 @@ import (
 	"github.com/leonlatsch/go-resolve/internal/models"
 )
 
-type IpObserver struct {
+type IpObserverService struct {
 	IpApi  api.IpApi
 	Config *models.Config
 	LastIp string
 }
 
-func (self *IpObserver) ObserveIp(callback func(ip string)) {
+func (self *IpObserverService) ObserveIp(callback func(ip string)) {
 	ipChan := self.observePublicIp()
 
 	for {
@@ -24,7 +24,7 @@ func (self *IpObserver) ObserveIp(callback func(ip string)) {
 	}
 }
 
-func (self *IpObserver) observePublicIp() chan string {
+func (self *IpObserverService) observePublicIp() chan string {
 	ipChan := make(chan string)
 	interval, err := time.ParseDuration(self.Config.Interval)
 	if err != nil {

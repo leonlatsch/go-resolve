@@ -10,7 +10,7 @@ import (
 type UpdateUrlService struct {
 	Config       *models.Config
 	UpdateUrlApi api.UpdateUrlApi
-	IpObserver   IpObserver
+	IpObserver   IpObserverService
 }
 
 func (self *UpdateUrlService) ObserveAndUpdateDns() {

@@ -11,7 +11,7 @@ import (
 
 func TestPrintDomainDetails(t *testing.T) {
 	godaddyApiFake := api.GodaddyApiFake{}
-	ipOpserver := service.IpObserver{}
+	ipOpserver := service.IpObserverService{}
 
 	service := service.GodaddyService{
 		Config:     &models.Config{},

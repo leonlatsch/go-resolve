@@ -33,7 +33,7 @@ func createService(conf *models.Config, httpClient http.HttpClient) (service.Dns
 		updateUrlService := service.UpdateUrlService{
 			Config:       conf,
 			UpdateUrlApi: &api.UpdateUrlApiImpl{Config: conf, HttpClient: httpClient},
-			IpObserver: service.IpObserver{
+			IpObserver: service.IpObserverService{
 				IpApi:  &api.IpApiImpl{HttpClient: httpClient},
 				Config: conf,
 			},
@@ -48,7 +48,7 @@ func createService(conf *models.Config, httpClient http.HttpClient) (service.Dns
 		godaddyService := service.GodaddyService{
 			Config:     conf,
 			GodaddyApi: &api.GodaddyApiImpl{Config: conf, HttpClient: httpClient},
-			IpObserver: service.IpObserver{
+			IpObserver: service.IpObserverService{
 				IpApi:  &api.IpApiImpl{HttpClient: httpClient},
 				Config: conf,
 			},
