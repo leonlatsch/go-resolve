@@ -3,6 +3,7 @@ package models
 const (
 	ProviderUpdateUrl = "updateUrl"
 	ProviderGoDaddy   = "goDaddy"
+	ProviderHetzner   = "hetzner"
 )
 
 type Config struct {
@@ -13,6 +14,7 @@ type Config struct {
 
 	UpdateUrlConfig UpdateUrlConfig `json:"updateUrlConfig"`
 	GoDaddyConfig   GoDaddyConfig   `json:"goDaddyConfig"`
+	HetznerConfig   HetznerConfig   `json:"hetznerConfig"`
 }
 
 type UpdateUrlConfig struct {
@@ -22,6 +24,11 @@ type UpdateUrlConfig struct {
 type GoDaddyConfig struct {
 	ApiKey    string `json:"apiKey"`
 	ApiSecret string `json:"apiSecret"`
+}
+
+type HetznerConfig struct {
+	ZoneId   string `json:"zoneId"`
+	ApiToken string `json:"apiToken"`
 }
 
 // Empty Config. Used for generating file at first launch
@@ -38,5 +45,9 @@ var EmptyConfig = Config{
 	GoDaddyConfig: GoDaddyConfig{
 		ApiKey:    "GODADDY_API_KEY",
 		ApiSecret: "GODADDY_API_SECRET",
+	},
+	HetznerConfig: HetznerConfig{
+		ZoneId:   "ZONE_ID",
+		ApiToken: "API_TOKEN",
 	},
 }

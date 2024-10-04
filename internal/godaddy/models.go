@@ -1,4 +1,4 @@
-package models
+package godaddy
 
 type DnsRecord struct {
 	Data string `json:"data"`

@@ -6,6 +6,8 @@ import (
 
 	"github.com/leonlatsch/go-resolve/internal/api"
 	"github.com/leonlatsch/go-resolve/internal/config"
+	"github.com/leonlatsch/go-resolve/internal/godaddy"
+	"github.com/leonlatsch/go-resolve/internal/hetzner"
 	"github.com/leonlatsch/go-resolve/internal/http"
 	"github.com/leonlatsch/go-resolve/internal/models"
 	"github.com/leonlatsch/go-resolve/internal/service"
@@ -47,7 +49,7 @@ func createService(conf *models.Config, httpClient http.HttpClient) (service.Dns
 
 		godaddyService := service.GodaddyService{
 			Config:     conf,
-			GodaddyApi: &api.GodaddyApiImpl{Config: conf, HttpClient: httpClient},
+			GodaddyApi: &godaddy.GodaddyApiImpl{Config: conf, HttpClient: httpClient},
 			IpObserver: service.IpObserverService{
 				IpApi:  &api.IpApiImpl{HttpClient: httpClient},
 				Config: conf,
@@ -60,6 +62,24 @@ func createService(conf *models.Config, httpClient http.HttpClient) (service.Dns
 
 		return &godaddyService, nil
 
+	}
+
+	if conf.Provider == models.ProviderHetzner {
+		hetznerService := hetzner.HetznerService{
+			Config:     conf,
+			HetznerApi: &hetzner.HetznerApiImpl{Config: conf, HttpClient: httpClient},
+			IpObserverService: service.IpObserverService{
+				IpApi:  &api.IpApiImpl{HttpClient: httpClient},
+				Config: conf,
+			},
+			RecordIds: map[string]hetzner.RecordId{},
+		}
+
+		if err := hetznerService.PreloadRecordIds(); err != nil {
+			log.Fatalln(err)
+		}
+
+		return &hetznerService, nil
 	}
 
 	return nil, errors.New("No service for configured provider")
