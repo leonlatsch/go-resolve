@@ -22,7 +22,8 @@ func (service *HetznerService) PreloadRecordIds() error {
 
 	records, err := service.HetznerApi.GetRecords()
 	if err != nil {
-		return errors.New("Could not preload records ids. Please check your config")
+		log.Println("Could not preload records ids. Please check your config")
+		return err
 	}
 
 	for _, record := range records {
