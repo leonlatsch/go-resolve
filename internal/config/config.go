@@ -72,7 +72,6 @@ func createEmptyConfig() error {
 		Domain:    "YOUR_DOMAIN",
 		Hosts:     []string{"HOST1", "HOST2"},
 		Interval:  "1h",
-		Mode:      "JOB",
 	}
 
 	if err := SaveConfig(newEmptyConfig); err != nil {
