@@ -14,7 +14,7 @@ ghcr.io/leonlatsch/go-resolve:latest
 
 ### Config
 
-´´´json
+```json
 {
     "provider": "hetzner", // Available: updateUrl, goDaddy, hetzner
     "interval": "1h",
@@ -35,4 +35,4 @@ ghcr.io/leonlatsch/go-resolve:latest
         "apiToken": "HETZNER_API_TOKEN"
     }
 }
-´´´
+```
