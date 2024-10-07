@@ -1,4 +1,4 @@
-package api
+package godaddy
 
 import (
 	"fmt"
@@ -10,10 +10,10 @@ import (
 )
 
 type GodaddyApi interface {
-	GetDomainDetail() (models.DomainDetail, error)
-	GetRecords(host string) ([]models.DnsRecord, error)
-	CreateRecord(record models.DnsRecord) error
-	UpdateRecord(record models.DnsRecord) error
+	GetDomainDetail() (DomainDetail, error)
+	GetRecords(host string) ([]DnsRecord, error)
+	CreateRecord(record DnsRecord) error
+	UpdateRecord(record DnsRecord) error
 }
 
 type GodaddyApiImpl struct {
@@ -23,8 +23,8 @@ type GodaddyApiImpl struct {
 
 const BASE_URL = "https://api.godaddy.com/v1"
 
-func (self *GodaddyApiImpl) GetDomainDetail() (models.DomainDetail, error) {
-	var detail models.DomainDetail
+func (self *GodaddyApiImpl) GetDomainDetail() (DomainDetail, error) {
+	var detail DomainDetail
 	json, err := self.HttpClient.Get(self.endpointDomainDetail(), self.getAuthHeaders())
 	if err != nil {
 		return detail, err
@@ -37,8 +37,8 @@ func (self *GodaddyApiImpl) GetDomainDetail() (models.DomainDetail, error) {
 	return detail, nil
 }
 
-func (self *GodaddyApiImpl) GetRecords(host string) ([]models.DnsRecord, error) {
-	var records []models.DnsRecord
+func (self *GodaddyApiImpl) GetRecords(host string) ([]DnsRecord, error) {
+	var records []DnsRecord
 	recordsJson, err := self.HttpClient.Get(self.endpointARecords(host), self.getAuthHeaders())
 
 	if err != nil {
@@ -52,9 +52,9 @@ func (self *GodaddyApiImpl) GetRecords(host string) ([]models.DnsRecord, error) 
 	return records, nil
 }
 
-func (self *GodaddyApiImpl) CreateRecord(record models.DnsRecord) error {
+func (self *GodaddyApiImpl) CreateRecord(record DnsRecord) error {
 	log.Println("Creating " + record.Name + "." + self.Config.Domain + " -> " + record.Data)
-	records := []models.DnsRecord{record}
+	records := []DnsRecord{record}
 
 	if _, err := self.HttpClient.Patch(self.endpointRecords(""), self.getAuthHeaders(), records); err != nil {
 		return err
@@ -63,9 +63,9 @@ func (self *GodaddyApiImpl) CreateRecord(record models.DnsRecord) error {
 	return nil
 }
 
-func (self *GodaddyApiImpl) UpdateRecord(record models.DnsRecord) error {
+func (self *GodaddyApiImpl) UpdateRecord(record DnsRecord) error {
 	log.Println("Updating " + record.Name + "." + self.Config.Domain + " -> " + record.Data)
-	records := []models.DnsRecord{record}
+	records := []DnsRecord{record}
 
 	if _, err := self.HttpClient.Put(self.endpointARecords(record.Name), self.getAuthHeaders(), records); err != nil {
 		return err

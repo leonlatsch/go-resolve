@@ -5,12 +5,13 @@ import (
 	"testing"
 
 	"github.com/leonlatsch/go-resolve/internal/api"
+	"github.com/leonlatsch/go-resolve/internal/godaddy"
 	"github.com/leonlatsch/go-resolve/internal/models"
 	"github.com/leonlatsch/go-resolve/internal/service"
 )
 
 func TestPrintDomainDetails(t *testing.T) {
-	godaddyApiFake := api.GodaddyApiFake{}
+	godaddyApiFake := godaddy.GodaddyApiFake{}
 	ipOpserver := service.IpObserverService{}
 
 	service := service.GodaddyService{
@@ -21,9 +22,9 @@ func TestPrintDomainDetails(t *testing.T) {
 	}
 
 	t.Run("Get domain details does not crash with correct json response", func(t *testing.T) {
-		fakeDomainDetail := models.DomainDetail{
+		fakeDomainDetail := godaddy.DomainDetail{
 			Domain: "somedomain.com",
-			ContactAdmin: models.DomainContact{
+			ContactAdmin: godaddy.DomainContact{
 				Email:     "someemail@asdf.com",
 				FirstName: "FirstName",
 				LastName:  "LastName",
@@ -47,7 +48,7 @@ func TestPrintDomainDetails(t *testing.T) {
 }
 
 func TestOnIpChanged(t *testing.T) {
-	godaddyApiFake := api.GodaddyApiFake{}
+	godaddyApiFake := godaddy.GodaddyApiFake{}
 	conf := models.Config{
 		Domain: "mydomain.com",
 		Hosts:  []string{"host1", "host2"},
@@ -60,27 +61,27 @@ func TestOnIpChanged(t *testing.T) {
 	}
 
 	t.Run("OnIpChanged creates new and updates existing record", func(t *testing.T) {
-		godaddyApiFake.ExistingRecords = make(map[string][]models.DnsRecord)
-		godaddyApiFake.ExistingRecords["host1"] = []models.DnsRecord{
+		godaddyApiFake.ExistingRecords = make(map[string][]godaddy.DnsRecord)
+		godaddyApiFake.ExistingRecords["host1"] = []godaddy.DnsRecord{
 			{
 				Data: "oldIp",
 				Name: "host1",
 				Type: "A",
 			},
 		}
-		godaddyApiFake.ExistingRecords["host2"] = []models.DnsRecord{}
+		godaddyApiFake.ExistingRecords["host2"] = []godaddy.DnsRecord{}
 
 		// host1 should be updated and host2 should be created
 
 		newIp := "123.123.123.123"
 		service.UpdateDns(newIp)
 
-		expectedUpdatedRecord := models.DnsRecord{
+		expectedUpdatedRecord := godaddy.DnsRecord{
 			Data: newIp,
 			Name: "host1",
 			Type: "A",
 		}
-		expectedCreatedRecord := models.DnsRecord{
+		expectedCreatedRecord := godaddy.DnsRecord{
 			Data: newIp,
 			Name: "host2",
 			Type: "A",

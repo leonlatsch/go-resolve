@@ -5,12 +5,13 @@ import (
 	"log"
 
 	"github.com/leonlatsch/go-resolve/internal/api"
+	"github.com/leonlatsch/go-resolve/internal/godaddy"
 	"github.com/leonlatsch/go-resolve/internal/models"
 )
 
 type GodaddyService struct {
 	Config     *models.Config
-	GodaddyApi api.GodaddyApi
+	GodaddyApi godaddy.GodaddyApi
 	IpApi      api.IpApi
 	IpObserver IpObserverService
 }
@@ -56,7 +57,7 @@ func (self *GodaddyService) UpdateDns(ip string) {
 			continue
 		}
 
-		record := models.DnsRecord{
+		record := godaddy.DnsRecord{
 			Data: ip,
 			Name: host,
 			Type: "A",
