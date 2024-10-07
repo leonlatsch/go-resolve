@@ -39,16 +39,13 @@ func (api *HetznerApiImpl) GetRecords() ([]Record, error) {
 }
 
 func (api *HetznerApiImpl) BulkUpdate(records []Record) error {
-	url := fmt.Sprintf("%v/records/bulk", BASE_URL)
 	recordsWrapper := RecordsWrapper{
 		Records: records,
 	}
-	recordsJson, err := serialization.ToJson(recordsWrapper)
-	if err != nil {
-		return err
-	}
 
-	if _, err := api.HttpClient.Put(url, api.getHeaders(), recordsJson); err != nil {
+	url := fmt.Sprintf("%v/records/bulk", BASE_URL)
+
+	if _, err := api.HttpClient.Put(url, api.getHeaders(), recordsWrapper); err != nil {
 		return err
 	}
 
