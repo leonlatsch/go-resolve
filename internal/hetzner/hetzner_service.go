@@ -17,32 +17,6 @@ type HetznerService struct {
 	RecordIds map[string]RecordId
 }
 
-func (service *HetznerService) PreloadRecordIds() error {
-	recordIds := make(map[string]RecordId)
-
-	records, err := service.HetznerApi.GetRecords()
-	if err != nil {
-		log.Println("Could not preload records ids. Please check your config")
-		return err
-	}
-
-	for _, record := range records {
-		for _, host := range service.Config.Hosts {
-			if host == record.Name {
-				log.Printf("Loaded record id %v for %v", record.Id, host)
-				recordIds[host] = record.Id
-			}
-		}
-	}
-
-	if len(recordIds) <= 0 {
-		return errors.New("Could not find configured records in dns entries")
-	}
-
-	service.RecordIds = recordIds
-	return nil
-}
-
 func (service *HetznerService) ObserveAndUpdateDns() {
 	log.Println("Running for hetzner")
 	service.IpObserverService.ObserveIp(func(ip string) {
@@ -79,4 +53,30 @@ func (service *HetznerService) UpdateDns(ip string) {
 
 	log.Println("Successfully updated all records. Caching " + ip)
 	service.IpObserverService.LastIp = ip
+}
+
+func (service *HetznerService) Initialize() error {
+	recordIds := make(map[string]RecordId)
+
+	records, err := service.HetznerApi.GetRecords()
+	if err != nil {
+		log.Println("Could not preload records ids. Please check your config")
+		return err
+	}
+
+	for _, record := range records {
+		for _, host := range service.Config.Hosts {
+			if host == record.Name {
+				log.Printf("Loaded record id %v for %v", record.Id, host)
+				recordIds[host] = record.Id
+			}
+		}
+	}
+
+	if len(recordIds) <= 0 {
+		return errors.New("Could not find configured records in dns entries")
+	}
+
+	service.RecordIds = recordIds
+	return nil
 }

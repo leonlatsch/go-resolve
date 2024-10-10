@@ -16,26 +16,6 @@ type GodaddyService struct {
 	IpObserver IpObserverService
 }
 
-func (self *GodaddyService) PrintDomainDetail() error {
-	domainDetail, err := self.GodaddyApi.GetDomainDetail()
-	if err != nil {
-		log.Println("Could not load domain detail for " + self.Config.Domain)
-		return err
-	}
-
-	log.Println(
-		fmt.Sprintf(
-			"Config valid. Running for domain %s maintained by %s %s (%s)",
-			domainDetail.Domain,
-			domainDetail.ContactAdmin.FirstName,
-			domainDetail.ContactAdmin.LastName,
-			domainDetail.ContactAdmin.Email,
-		),
-	)
-
-	return nil
-}
-
 func (self *GodaddyService) ObserveAndUpdateDns() {
 	log.Println("Running for godaddy")
 	self.IpObserver.ObserveIp(func(ip string) {
@@ -90,4 +70,24 @@ func (self *GodaddyService) UpdateDns(ip string) {
 
 	log.Println("Successfully updated all records. Caching " + ip)
 	self.IpObserver.LastIp = ip
+}
+
+func (service *GodaddyService) Initialize() error {
+	domainDetail, err := service.GodaddyApi.GetDomainDetail()
+	if err != nil {
+		log.Println("Could not load domain detail for " + service.Config.Domain)
+		return err
+	}
+
+	log.Println(
+		fmt.Sprintf(
+			"Config valid. Running for domain %s maintained by %s %s (%s)",
+			domainDetail.Domain,
+			domainDetail.ContactAdmin.FirstName,
+			domainDetail.ContactAdmin.LastName,
+			domainDetail.ContactAdmin.Email,
+		),
+	)
+
+	return nil
 }

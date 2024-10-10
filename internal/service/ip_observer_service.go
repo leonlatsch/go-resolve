@@ -43,3 +43,7 @@ func (self *IpObserverService) observePublicIp() chan string {
 
 	return ipChan
 }
+
+func (service *IpObserverService) Initialize() error {
+	return nil
+}

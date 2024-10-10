@@ -30,3 +30,7 @@ func (self *UpdateUrlService) UpdateDns(ip string) {
 		log.Println("Updating " + host + "." + self.Config.Domain)
 	}
 }
+
+func (service *UpdateUrlService) Initialize() error {
+	return nil
+}
