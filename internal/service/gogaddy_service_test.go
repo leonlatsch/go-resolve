@@ -33,7 +33,7 @@ func TestPrintDomainDetails(t *testing.T) {
 
 		godaddyApiFake.DomainDetail = fakeDomainDetail
 
-		if err := service.PrintDomainDetail(); err != nil {
+		if err := service.Initialize(); err != nil {
 			t.Fatal(err)
 		}
 	})
@@ -41,7 +41,7 @@ func TestPrintDomainDetails(t *testing.T) {
 	t.Run("Get domain details crash if http returns an error", func(t *testing.T) {
 		godaddyApiFake.Error = errors.New("Some http error")
 
-		if err := service.PrintDomainDetail(); err == nil {
+		if err := service.Initialize(); err == nil {
 			t.Fatal("Was expected to return error but did not")
 		}
 	})
