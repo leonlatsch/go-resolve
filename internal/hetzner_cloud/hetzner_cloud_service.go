@@ -47,6 +47,7 @@ func (service *HetznerCloudService) UpdateDns(ip string) error {
 			if err := service.client.Action.WaitFor(waitCtx, action); err != nil {
 				log.Println("Error while waiting for timeout", err)
 				cancel()
+				failed++
 				continue
 			}
 			cancel()
