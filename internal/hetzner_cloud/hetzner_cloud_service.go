@@ -22,6 +22,7 @@ type HetznerCloudService struct {
 func (service *HetznerCloudService) UpdateDns(ip string) error {
 	failed := 0
 	for _, host := range service.Config.Hosts {
+		log.Println("Updating records for " + host + "." + service.Config.Domain)
 		rrset, _, err := service.client.Zone.GetRRSetByNameAndType(context.Background(), service.zone, host, hcloud.ZoneRRSetTypeA)
 		if err != nil {
 			log.Println("No RRSet for host "+host+". Skipping", err)
