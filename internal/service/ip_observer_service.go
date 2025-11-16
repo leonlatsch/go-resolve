@@ -38,6 +38,7 @@ func (self *IpObserverService) observePublicIp() chan string {
 		currentIp, err := self.IpApi.GetPublicIpAddress()
 		if err == nil && currentIp != self.LastIp {
 			ipChan <- currentIp
+			self.LastIp = currentIp
 		}
 	})
 
