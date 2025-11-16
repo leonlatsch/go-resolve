@@ -34,8 +34,8 @@ ghcr.io/leonlatsch/go-resolve:latest
         "zoneId": "HETZNER_ZONE_ID",
         "apiToken": "HETZNER_API_TOKEN"
     },
-    hetznerCloudConfig: {
-        cloudApiToken: HETZNER_CLOUD_API_TOKEN
+    "hetznerCloudConfig": {
+        "cloudApiToken": HETZNER_CLOUD_API_TOKEN
     }
 }
 }
