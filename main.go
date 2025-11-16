@@ -38,6 +38,8 @@ func createService(conf *models.Config) (service.DnsModeService, error) {
 		return &ServiceLocator.GoDaddyService, nil
 	case models.ProviderHetzner:
 		return &ServiceLocator.HetznerService, nil
+	case models.ProviderHetznerCloud:
+		return &ServiceLocator.HetznerCloudService, nil
 	}
 
 	return nil, errors.New("No service for configured provider")

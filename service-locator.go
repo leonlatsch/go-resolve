@@ -4,6 +4,7 @@ import (
 	"github.com/leonlatsch/go-resolve/internal/api"
 	"github.com/leonlatsch/go-resolve/internal/godaddy"
 	"github.com/leonlatsch/go-resolve/internal/hetzner"
+	hetznercloud "github.com/leonlatsch/go-resolve/internal/hetzner_cloud"
 	"github.com/leonlatsch/go-resolve/internal/http"
 	"github.com/leonlatsch/go-resolve/internal/models"
 	"github.com/leonlatsch/go-resolve/internal/service"
@@ -19,10 +20,11 @@ type serviceLocator struct {
 	GoDaddyApi   godaddy.GodaddyApi
 	HetznerApi   hetzner.HetznerApi
 
-	IpObserverService service.IpObserverService
-	UpdateUrlService  service.UpdateUrlService
-	GoDaddyService    service.GodaddyService
-	HetznerService    hetzner.HetznerService
+	IpObserverService   service.IpObserverService
+	UpdateUrlService    service.UpdateUrlService
+	GoDaddyService      service.GodaddyService
+	HetznerService      hetzner.HetznerService
+	HetznerCloudService hetznercloud.HetznerCloudService
 }
 
 func InitializeServiceLocator(conf *models.Config) {
@@ -71,6 +73,12 @@ func InitializeServiceLocator(conf *models.Config) {
 		IpObserverService: ipObserverService,
 	}
 
+	hetznerCloudService := hetznercloud.HetznerCloudService{
+		Config:            conf,
+		IpObserverService: ipObserverService,
+		IpApi:             ipApi,
+	}
+
 	ServiceLocator = &serviceLocator{
 		HttpClient: httpClient,
 
@@ -79,9 +87,10 @@ func InitializeServiceLocator(conf *models.Config) {
 		GoDaddyApi:   godaddyApi,
 		HetznerApi:   hetznerApi,
 
-		IpObserverService: ipObserverService,
-		UpdateUrlService:  updateUrlService,
-		GoDaddyService:    godaddyService,
-		HetznerService:    hetznerService,
+		IpObserverService:   ipObserverService,
+		UpdateUrlService:    updateUrlService,
+		GoDaddyService:      godaddyService,
+		HetznerService:      hetznerService,
+		HetznerCloudService: hetznerCloudService,
 	}
 }

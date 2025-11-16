@@ -1,9 +1,10 @@
 package models
 
 const (
-	ProviderUpdateUrl = "updateUrl"
-	ProviderGoDaddy   = "goDaddy"
-	ProviderHetzner   = "hetzner"
+	ProviderUpdateUrl    = "updateUrl"
+	ProviderGoDaddy      = "goDaddy"
+	ProviderHetzner      = "hetzner"
+	ProviderHetznerCloud = "hetznerCloud"
 )
 
 type Config struct {
@@ -12,9 +13,10 @@ type Config struct {
 	Domain   string   `json:"domain"`
 	Hosts    []string `json:"hosts"`
 
-	UpdateUrlConfig UpdateUrlConfig `json:"updateUrlConfig"`
-	GoDaddyConfig   GoDaddyConfig   `json:"goDaddyConfig"`
-	HetznerConfig   HetznerConfig   `json:"hetznerConfig"`
+	UpdateUrlConfig    UpdateUrlConfig    `json:"updateUrlConfig"`
+	GoDaddyConfig      GoDaddyConfig      `json:"goDaddyConfig"`
+	HetznerConfig      HetznerConfig      `json:"hetznerConfig"`
+	HetznerCloudConfig HetznerCloudConfig `json:"hetznerCloudConfig"`
 }
 
 type UpdateUrlConfig struct {
@@ -29,6 +31,10 @@ type GoDaddyConfig struct {
 type HetznerConfig struct {
 	ZoneId   string `json:"zoneId"`
 	ApiToken string `json:"apiToken"`
+}
+
+type HetznerCloudConfig struct {
+	CloudApiToken string `json:"cloudApiToken"`
 }
 
 // Empty Config. Used for generating file at first launch
@@ -49,5 +55,8 @@ var EmptyConfig = Config{
 	HetznerConfig: HetznerConfig{
 		ZoneId:   "ZONE_ID",
 		ApiToken: "API_TOKEN",
+	},
+	HetznerCloudConfig: HetznerCloudConfig{
+		CloudApiToken: "CLOUD_API_TOKEN",
 	},
 }
