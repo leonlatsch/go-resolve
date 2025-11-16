@@ -16,7 +16,7 @@ ghcr.io/leonlatsch/go-resolve:latest
 
 ```json
 {
-    "provider": "hetzner", // Available: updateUrl, goDaddy, hetzner
+    "provider": "hetzner", // Available: updateUrl, goDaddy, hetzner, hetznerCloud
     "interval": "1h",
     "domain": "yourdomain.dom",
     "hosts": [
@@ -33,6 +33,10 @@ ghcr.io/leonlatsch/go-resolve:latest
     "hetznerConfig": {
         "zoneId": "HETZNER_ZONE_ID",
         "apiToken": "HETZNER_API_TOKEN"
+    },
+    hetznerCloudConfig: {
+        cloudApiToken: HETZNER_CLOUD_API_TOKEN
     }
+}
 }
 ```
