@@ -18,7 +18,7 @@ func main() {
 
 	InitializeServiceLocator(conf)
 
-	service, err := createService(conf)
+	service, err := createDnsService(conf)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -27,10 +27,23 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	service.ObserveAndUpdateDns()
+	ipObserverService := &ServiceLocator.IpObserverService
+
+	log.Println("Running for " + conf.Provider)
+
+	ipObserverService.ObserveIp(func(ip string) {
+		log.Println("New IP: " + ip + " | Notifying " + conf.Provider)
+		err := service.UpdateDns(ip)
+		if err != nil {
+			log.Println("Not caching ip: ", err)
+		} else {
+			log.Println("Successfully updated all records. Caching " + ip)
+			ipObserverService.LastIp = ip
+		}
+	})
 }
 
-func createService(conf *models.Config) (service.DnsModeService, error) {
+func createDnsService(conf *models.Config) (service.DnsModeService, error) {
 	switch conf.Provider {
 	case models.ProviderUpdateUrl:
 		return &ServiceLocator.UpdateUrlService, nil

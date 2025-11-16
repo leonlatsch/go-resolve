@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"log"
 
 	"github.com/leonlatsch/go-resolve/internal/api"
@@ -10,25 +11,25 @@ import (
 type UpdateUrlService struct {
 	Config       *models.Config
 	UpdateUrlApi api.UpdateUrlApi
-	IpObserver   IpObserverService
 }
 
-func (self *UpdateUrlService) ObserveAndUpdateDns() {
-	log.Println("Running for update url")
-	self.IpObserver.ObserveIp(func(ip string) {
-		self.UpdateDns(ip)
-	})
-}
-
-func (self *UpdateUrlService) UpdateDns(ip string) {
-	for _, host := range self.Config.Hosts {
-		if err := self.UpdateUrlApi.CallUpdateUrl(host); err != nil {
+func (service *UpdateUrlService) UpdateDns(ip string) error {
+	failed := 0
+	for _, host := range service.Config.Hosts {
+		if err := service.UpdateUrlApi.CallUpdateUrl(host); err != nil {
 			log.Println("Could not update via url for host " + host)
+			failed++
 			continue
 		}
 
-		log.Println("Updating " + host + "." + self.Config.Domain)
+		log.Println("Updating " + host + "." + service.Config.Domain)
 	}
+
+	if failed > 0 {
+		return errors.New("Cloud not update all records")
+	}
+
+	return nil
 }
 
 func (service *UpdateUrlService) Initialize() error {

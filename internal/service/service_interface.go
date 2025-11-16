@@ -1,7 +1,6 @@
 package service
 
 type DnsModeService interface {
-	ObserveAndUpdateDns()
-	UpdateDns(ip string)
+	UpdateDns(ip string) error
 	Initialize() error
 }

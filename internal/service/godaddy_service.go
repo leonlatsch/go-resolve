@@ -1,10 +1,10 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
-	"github.com/leonlatsch/go-resolve/internal/api"
 	"github.com/leonlatsch/go-resolve/internal/godaddy"
 	"github.com/leonlatsch/go-resolve/internal/models"
 )
@@ -12,25 +12,15 @@ import (
 type GodaddyService struct {
 	Config     *models.Config
 	GodaddyApi godaddy.GodaddyApi
-	IpApi      api.IpApi
-	IpObserver IpObserverService
-}
-
-func (self *GodaddyService) ObserveAndUpdateDns() {
-	log.Println("Running for godaddy")
-	self.IpObserver.ObserveIp(func(ip string) {
-		self.UpdateDns(ip)
-	})
 }
 
 // Updates all records defined in Hosts with the new ip
-func (self *GodaddyService) UpdateDns(ip string) {
-	log.Println("Ip changed: " + ip)
+func (service *GodaddyService) UpdateDns(ip string) error {
 	failed := 0
 
-	for _, host := range self.Config.Hosts {
+	for _, host := range service.Config.Hosts {
 
-		existingRecords, err := self.GodaddyApi.GetRecords(host)
+		existingRecords, err := service.GodaddyApi.GetRecords(host)
 		if err != nil {
 			log.Println(err)
 			failed++
@@ -45,13 +35,13 @@ func (self *GodaddyService) UpdateDns(ip string) {
 
 		switch len(existingRecords) {
 		case 0:
-			if err := self.GodaddyApi.CreateRecord(record); err != nil {
+			if err := service.GodaddyApi.CreateRecord(record); err != nil {
 				log.Println(err)
 				failed++
 				continue
 			}
 		case 1:
-			if err := self.GodaddyApi.UpdateRecord(record); err != nil {
+			if err := service.GodaddyApi.UpdateRecord(record); err != nil {
 				log.Println(err)
 				failed++
 				continue
@@ -64,12 +54,10 @@ func (self *GodaddyService) UpdateDns(ip string) {
 	}
 
 	if failed > 0 {
-		log.Println("Some updates failed. Not caching ip")
-		return
+		return errors.New("Could not update all records")
 	}
 
-	log.Println("Successfully updated all records. Caching " + ip)
-	self.IpObserver.LastIp = ip
+	return nil
 }
 
 func (service *GodaddyService) Initialize() error {

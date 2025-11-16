@@ -2,38 +2,30 @@ package hetznercloud
 
 import (
 	"context"
+	"errors"
 	"log"
 	"time"
 
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	"github.com/leonlatsch/go-resolve/internal/api"
 	"github.com/leonlatsch/go-resolve/internal/models"
-	"github.com/leonlatsch/go-resolve/internal/service"
 )
 
 type HetznerCloudService struct {
-	Config            *models.Config
-	IpObserverService service.IpObserverService
-	IpApi             api.IpApi
+	Config *models.Config
+	IpApi  api.IpApi
 
 	client *hcloud.Client
 	zone   *hcloud.Zone
 }
 
-func (service *HetznerCloudService) ObserveAndUpdateDns() {
-	log.Println("Running for hetzner cloud")
-	service.IpObserverService.ObserveIp(func(ip string) {
-		service.UpdateDns(ip)
-	})
-}
-
-func (service *HetznerCloudService) UpdateDns(ip string) {
-	log.Println("Ip changed: " + ip)
-
+func (service *HetznerCloudService) UpdateDns(ip string) error {
+	failed := 0
 	for _, host := range service.Config.Hosts {
 		rrset, _, err := service.client.Zone.GetRRSetByNameAndType(context.Background(), service.zone, host, hcloud.ZoneRRSetTypeA)
 		if err != nil {
 			log.Println("No RRSet for host "+host+". Skipping", err)
+			failed++
 			continue
 		}
 
@@ -46,6 +38,7 @@ func (service *HetznerCloudService) UpdateDns(ip string) {
 		action, _, err := service.client.Zone.SetRRSetRecords(context.Background(), rrset, setOpts)
 		if err != nil {
 			log.Println("Error updating records for RRSet", err)
+			failed++
 			continue
 		}
 
@@ -59,6 +52,12 @@ func (service *HetznerCloudService) UpdateDns(ip string) {
 			cancel()
 		}
 	}
+
+	if failed > 0 {
+		return errors.New("Cloud not update all records")
+	}
+
+	return nil
 }
 
 func (service *HetznerCloudService) Initialize() error {

@@ -6,30 +6,18 @@ import (
 	"log"
 
 	"github.com/leonlatsch/go-resolve/internal/models"
-	"github.com/leonlatsch/go-resolve/internal/service"
 )
 
 type HetznerService struct {
-	Config            *models.Config
-	HetznerApi        HetznerApi
-	IpObserverService service.IpObserverService
+	Config     *models.Config
+	HetznerApi HetznerApi
 
 	RecordIds map[string]RecordId
 }
 
-func (service *HetznerService) ObserveAndUpdateDns() {
-	log.Println("Running for hetzner")
-	service.IpObserverService.ObserveIp(func(ip string) {
-		service.UpdateDns(ip)
-	})
-}
-
-func (service *HetznerService) UpdateDns(ip string) {
-	log.Println("Ip changed: " + ip)
-
+func (service *HetznerService) UpdateDns(ip string) error {
 	if len(service.RecordIds) <= 0 {
-		log.Println("No records ids loaded. Not updating.")
-		return
+		return errors.New("No records ids loaded. Not updating.")
 	}
 
 	records := []Record{}
@@ -46,13 +34,10 @@ func (service *HetznerService) UpdateDns(ip string) {
 
 	log.Println(fmt.Sprintf("Updating %v records for %v", len(records), service.Config.Domain))
 	if err := service.HetznerApi.BulkUpdate(records); err != nil {
-		log.Println("Bulk update failed. Not caching ip")
-		log.Println(err)
-		return
+		return err
 	}
 
-	log.Println("Successfully updated all records. Caching " + ip)
-	service.IpObserverService.LastIp = ip
+	return nil
 }
 
 func (service *HetznerService) Initialize() error {

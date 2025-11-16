@@ -57,26 +57,21 @@ func InitializeServiceLocator(conf *models.Config) {
 	updateUrlService := service.UpdateUrlService{
 		Config:       conf,
 		UpdateUrlApi: updateUrlApi,
-		IpObserver:   ipObserverService,
 	}
 
 	godaddyService := service.GodaddyService{
 		Config:     conf,
 		GodaddyApi: godaddyApi,
-		IpApi:      ipApi,
-		IpObserver: ipObserverService,
 	}
 
 	hetznerService := hetzner.HetznerService{
-		Config:            conf,
-		HetznerApi:        hetznerApi,
-		IpObserverService: ipObserverService,
+		Config:     conf,
+		HetznerApi: hetznerApi,
 	}
 
 	hetznerCloudService := hetznercloud.HetznerCloudService{
-		Config:            conf,
-		IpObserverService: ipObserverService,
-		IpApi:             ipApi,
+		Config: conf,
+		IpApi:  ipApi,
 	}
 
 	ServiceLocator = &serviceLocator{

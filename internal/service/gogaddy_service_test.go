@@ -4,7 +4,6 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/leonlatsch/go-resolve/internal/api"
 	"github.com/leonlatsch/go-resolve/internal/godaddy"
 	"github.com/leonlatsch/go-resolve/internal/models"
 	"github.com/leonlatsch/go-resolve/internal/service"
@@ -12,13 +11,10 @@ import (
 
 func TestPrintDomainDetails(t *testing.T) {
 	godaddyApiFake := godaddy.GodaddyApiFake{}
-	ipOpserver := service.IpObserverService{}
 
 	service := service.GodaddyService{
 		Config:     &models.Config{},
 		GodaddyApi: &godaddyApiFake,
-		IpApi:      &api.IpApiFake{},
-		IpObserver: ipOpserver,
 	}
 
 	t.Run("Get domain details does not crash with correct json response", func(t *testing.T) {
@@ -57,7 +53,6 @@ func TestOnIpChanged(t *testing.T) {
 	service := service.GodaddyService{
 		Config:     &conf,
 		GodaddyApi: &godaddyApiFake,
-		IpApi:      &api.IpApiFake{},
 	}
 
 	t.Run("OnIpChanged creates new and updates existing record", func(t *testing.T) {
@@ -92,9 +87,6 @@ func TestOnIpChanged(t *testing.T) {
 		}
 		if godaddyApiFake.CreateRecordCalledWith != expectedCreatedRecord {
 			t.Error("Created record did not match expected")
-		}
-		if service.IpObserver.LastIp != newIp {
-			t.Error("New ip was not cached")
 		}
 	})
 }
