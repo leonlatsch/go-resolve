@@ -1,4 +1,4 @@
-package service_test
+package godaddy_test
 
 import (
 	"errors"
@@ -6,13 +6,12 @@ import (
 
 	"github.com/leonlatsch/go-resolve/internal/godaddy"
 	"github.com/leonlatsch/go-resolve/internal/models"
-	"github.com/leonlatsch/go-resolve/internal/service"
 )
 
 func TestPrintDomainDetails(t *testing.T) {
 	godaddyApiFake := godaddy.GodaddyApiFake{}
 
-	service := service.GodaddyService{
+	service := godaddy.GodaddyService{
 		Config:     &models.Config{},
 		GodaddyApi: &godaddyApiFake,
 	}
@@ -50,7 +49,7 @@ func TestOnIpChanged(t *testing.T) {
 		Hosts:  []string{"host1", "host2"},
 	}
 
-	service := service.GodaddyService{
+	service := godaddy.GodaddyService{
 		Config:     &conf,
 		GodaddyApi: &godaddyApiFake,
 	}

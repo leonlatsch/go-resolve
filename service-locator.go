@@ -22,7 +22,7 @@ type serviceLocator struct {
 
 	IpObserverService   service.IpObserverService
 	UpdateUrlService    service.UpdateUrlService
-	GoDaddyService      service.GodaddyService
+	GoDaddyService      godaddy.GodaddyService
 	HetznerService      hetzner.HetznerService
 	HetznerCloudService hetznercloud.HetznerCloudService
 }
@@ -59,7 +59,7 @@ func InitializeServiceLocator(conf *models.Config) {
 		UpdateUrlApi: updateUrlApi,
 	}
 
-	godaddyService := service.GodaddyService{
+	godaddyService := godaddy.GodaddyService{
 		Config:     conf,
 		GodaddyApi: godaddyApi,
 	}

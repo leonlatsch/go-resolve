@@ -1,17 +1,16 @@
-package service
+package godaddy
 
 import (
 	"errors"
 	"fmt"
 	"log"
 
-	"github.com/leonlatsch/go-resolve/internal/godaddy"
 	"github.com/leonlatsch/go-resolve/internal/models"
 )
 
 type GodaddyService struct {
 	Config     *models.Config
-	GodaddyApi godaddy.GodaddyApi
+	GodaddyApi GodaddyApi
 }
 
 // Updates all records defined in Hosts with the new ip
@@ -27,7 +26,7 @@ func (service *GodaddyService) UpdateDns(ip string) error {
 			continue
 		}
 
-		record := godaddy.DnsRecord{
+		record := DnsRecord{
 			Data: ip,
 			Name: host,
 			Type: "A",
