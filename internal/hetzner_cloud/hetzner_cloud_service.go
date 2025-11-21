@@ -56,7 +56,7 @@ func (service *HetznerCloudService) UpdateDns(ip string) error {
 	}
 
 	if failed > 0 {
-		return errors.New("Cloud not update all records")
+		return errors.New("cloud not update all records")
 	}
 
 	return nil
@@ -105,7 +105,7 @@ func (service *HetznerCloudService) Initialize() error {
 				zone, hcloud.ZoneRRSetCreateOpts{
 					Name: host,
 					Type: hcloud.ZoneRRSetTypeA,
-					TTL:  hcloud.Ptr(3600),
+					TTL:  hcloud.Ptr(300),
 					Records: []hcloud.ZoneRRSetRecord{
 						{
 							Value:   currentIP,
