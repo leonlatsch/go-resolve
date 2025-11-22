@@ -19,6 +19,7 @@ ghcr.io/leonlatsch/go-resolve:latest
     "provider": "hetzner", // Available: updateUrl, goDaddy, hetzner, hetznerCloud
     "interval": "1h",
     "domain": "yourdomain.dom",
+    "onlyUpnp": false, // Disables fallback of obtaining IP via external services
     "hosts": [
         "subdomain1",
         "subdomain2"

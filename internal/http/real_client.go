@@ -31,6 +31,15 @@ func (self *RealHttpClient) Put(url string, headers map[string]string, requestBo
 	return respBody, nil
 }
 
+func (self *RealHttpClient) Post(url string, headers map[string]string, requestBody interface{}) (string, error) {
+	respBody, err := request("POST", url, headers, requestBody)
+	if err != nil {
+		return "", err
+	}
+
+	return respBody, nil
+}
+
 func (self *RealHttpClient) Patch(url string, headers map[string]string, requestBody interface{}) (string, error) {
 	respBody, err := request("PATCH", url, headers, requestBody)
 	if err != nil {

@@ -30,9 +30,11 @@ type serviceLocator struct {
 func InitializeServiceLocator(conf *models.Config) {
 	httpClient := &http.RealHttpClient{}
 
-	ipApi := &api.IpApiImpl{
+	externalIpProvider := &api.IpApiImpl{
 		HttpClient: httpClient,
 	}
+
+	upnpIpApi := &api.UpnpIPAPI{}
 
 	updateUrlApi := &api.UpdateUrlApiImpl{
 		Config:     conf,
@@ -49,8 +51,16 @@ func InitializeServiceLocator(conf *models.Config) {
 		HttpClient: httpClient,
 	}
 
+	ipProviders := []api.IpApi{
+		upnpIpApi,
+	}
+
+	if !conf.OnlyUPNP {
+		ipProviders = append(ipProviders, externalIpProvider)
+	}
+
 	ipObserverService := service.IpObserverService{
-		IpApi:  ipApi,
+		Apis:   ipProviders,
 		Config: conf,
 	}
 
@@ -71,13 +81,13 @@ func InitializeServiceLocator(conf *models.Config) {
 
 	hetznerCloudService := hetznercloud.HetznerCloudService{
 		Config: conf,
-		IpApi:  ipApi,
+		IpApi:  externalIpProvider,
 	}
 
 	ServiceLocator = &serviceLocator{
 		HttpClient: httpClient,
 
-		IpApi:        ipApi,
+		IpApi:        externalIpProvider,
 		UpdateUrlApi: updateUrlApi,
 		GoDaddyApi:   godaddyApi,
 		HetznerApi:   hetznerApi,

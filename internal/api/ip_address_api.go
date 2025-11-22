@@ -16,6 +16,7 @@ var services = []string{
 }
 
 type IpApi interface {
+	Name() string
 	GetPublicIpAddress() (string, error)
 }
 
@@ -23,19 +24,23 @@ type IpApiImpl struct {
 	HttpClient http.HttpClient
 }
 
-func (self *IpApiImpl) GetPublicIpAddress() (string, error) {
+func (api *IpApiImpl) Name() string {
+	return "External Rest Apis"
+}
+
+func (api *IpApiImpl) GetPublicIpAddress() (string, error) {
 	for _, service := range services {
-		addr, err := self.getIpFrom(service)
+		addr, err := api.getIpFrom(service)
 		if err == nil && len(addr) != 0 {
 			return addr, nil
 		}
 	}
 
-	return "", errors.New("Could not obtain public ip")
+	return "", errors.New("could not obtain public ip")
 }
 
-func (self *IpApiImpl) getIpFrom(service string) (string, error) {
-	res, err := self.HttpClient.Get(service, nil)
+func (api *IpApiImpl) getIpFrom(service string) (string, error) {
+	res, err := api.HttpClient.Get(service, nil)
 	if err != nil {
 		return "", err
 	}

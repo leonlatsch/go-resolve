@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 )
 
 type IpObserverService struct {
-	IpApi  api.IpApi
+	Apis   []api.IpApi
 	Config *models.Config
 	LastIp string
 }
@@ -35,10 +36,21 @@ func (self *IpObserverService) observePublicIp() chan string {
 	log.Println("Checking for new ip every " + self.Config.Interval)
 
 	go cron.Repeat(interval, func() {
-		currentIp, err := self.IpApi.GetPublicIpAddress()
-		if err == nil && currentIp != self.LastIp {
-			ipChan <- currentIp
-			// Dont set self.LastIp, main waits for error and handles this
+		foundAnyIp := false
+		for _, ipApi := range self.Apis {
+			currentIp, err := ipApi.GetPublicIpAddress()
+			if err == nil && currentIp != self.LastIp {
+				log.Printf("Obtained new IP from %s", ipApi.Name())
+				ipChan <- currentIp
+				foundAnyIp = true
+				// Dont set self.LastIp, main waits for error and handles this
+			} else {
+				log.Println(fmt.Sprintf("Could not get ip from %s:", ipApi.Name()), err)
+			}
+		}
+
+		if !foundAnyIp {
+			log.Println("Could not obtain a IP from any provider. Skipping update.")
 		}
 	})
 

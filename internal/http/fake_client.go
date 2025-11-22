@@ -13,6 +13,10 @@ func (self *FakeHttpClient) Put(url string, headers map[string]string, body inte
 	return self.RespBody, self.Error
 }
 
+func (self *FakeHttpClient) Post(url string, headers map[string]string, body interface{}) (string, error) {
+	return self.RespBody, self.Error
+}
+
 func (self *FakeHttpClient) Patch(url string, headers map[string]string, body interface{}) (string, error) {
 	return self.RespBody, self.Error
 }

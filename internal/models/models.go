@@ -12,6 +12,7 @@ type Config struct {
 	Interval string   `json:"interval"`
 	Domain   string   `json:"domain"`
 	Hosts    []string `json:"hosts"`
+	OnlyUPNP bool     `json:"onlyUpnp"`
 
 	UpdateUrlConfig    UpdateUrlConfig    `json:"updateUrlConfig"`
 	GoDaddyConfig      GoDaddyConfig      `json:"goDaddyConfig"`
@@ -44,6 +45,7 @@ var EmptyConfig = Config{
 	Interval: "1h",
 	Domain:   "YOUR_DOMAIN",
 	Hosts:    []string{"HOST1", "HOST2"},
+	OnlyUPNP: false,
 
 	UpdateUrlConfig: UpdateUrlConfig{
 		Url: "UPDATE_URL",
