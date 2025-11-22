@@ -39,13 +39,19 @@ func (self *IpObserverService) observePublicIp() chan string {
 		foundAnyIp := false
 		for _, ipApi := range self.Apis {
 			currentIp, err := ipApi.GetPublicIpAddress()
-			if err == nil && currentIp != self.LastIp {
-				log.Printf("Obtained new IP from %s", ipApi.Name())
-				ipChan <- currentIp
-				foundAnyIp = true
-				// Dont set self.LastIp, main waits for error and handles this
-			} else {
+			if err != nil {
 				log.Println(fmt.Sprintf("Could not get ip from %s:", ipApi.Name()), err)
+				continue
+			}
+
+			foundAnyIp = true
+
+			if currentIp != self.LastIp {
+				log.Printf("Obtained new IP from %s", ipApi.Name())
+
+				ipChan <- currentIp
+
+				// Dont set self.LastIp, main waits for error and handles this
 			}
 		}
 
