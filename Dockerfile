@@ -20,7 +20,6 @@ RUN go mod download
 COPY . .
 
 # Build the binary and inject VERSION into main.Version
-# Note: ensure your code declares `package main` and `var Version = "dev"`
 RUN go build -ldflags="-X 'main.Version=${VERSION}'" -o /build/app
 
 # ---------- production ----------
