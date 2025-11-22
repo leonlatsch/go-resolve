@@ -33,9 +33,6 @@ RUN apk add --no-cache ca-certificates
 WORKDIR /go-resolve
 RUN mkdir -p config
 
-# Expose the version also as an environment variable (optional)
-ENV APP_VERSION=${VERSION}
-
 # Copy built binary from builder
 COPY --from=builder /build/app .
 
