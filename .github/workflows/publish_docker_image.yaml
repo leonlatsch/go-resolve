@@ -34,12 +34,7 @@ jobs:
 
       - name: Set VERSION value (tag name or short sha)
         run: |
-          if [ "${{ github.ref_type }}" = "tag" ]; then
-            echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
-          else
-            # short sha
-            echo "VERSION=${{ github.sha::8 }}" >> $GITHUB_ENV
-          fi
+          echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
 
       - name: Log in to container registry
         uses: docker/login-action@v3
