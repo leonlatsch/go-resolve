@@ -33,9 +33,7 @@ func main() {
 
 	ipObserverService := &ServiceLocator.IpObserverService
 
-	if conf.OnlyUPNP {
-		log.Println("Warning: OnlyUPNP is enabled. go-resolve will not try to obtain WAN IP from external services")
-	}
+	ipObserverService.PrintIpProviders()
 
 	ipObserverService.ObserveIp(func(ip string) {
 		log.Println("New IP: " + ip + " | Notifying " + conf.Provider)

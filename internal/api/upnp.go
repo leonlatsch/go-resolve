@@ -5,14 +5,16 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"regexp"
 
 	"github.com/jackpal/gateway"
+	"github.com/leonlatsch/go-resolve/internal/models"
 )
 
-type UpnpIPAPI struct{}
+type UpnpIPAPI struct {
+	conf models.Config
+}
 
 var discoveredGateway string
 
@@ -29,13 +31,16 @@ var reqBody = `<?xml version="1.0" encoding="utf-8"?>
 
 func (api *UpnpIPAPI) GetPublicIpAddress() (string, error) {
 	if discoveredGateway == "" {
-		gw, err := gateway.DiscoverGateway()
-		if err != nil {
-			return "", err
-		}
+		if api.conf.IpProviderConfig.UpnpGateway != "" {
+			discoveredGateway = api.conf.IpProviderConfig.UpnpGateway
+		} else {
+			gw, err := gateway.DiscoverGateway()
+			if err != nil {
+				return "", err
+			}
 
-		log.Println("Discovered Gateway for UPNP at " + gw.String())
-		discoveredGateway = gw.String()
+			discoveredGateway = gw.String()
+		}
 	}
 
 	req, _ := http.NewRequest("POST",

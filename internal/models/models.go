@@ -8,16 +8,22 @@ const (
 )
 
 type Config struct {
-	Provider string   `json:"provider"`
-	Interval string   `json:"interval"`
-	Domain   string   `json:"domain"`
-	Hosts    []string `json:"hosts"`
-	OnlyUPNP bool     `json:"onlyUpnp"`
+	Provider         string           `json:"provider"`
+	Interval         string           `json:"interval"`
+	Domain           string           `json:"domain"`
+	Hosts            []string         `json:"hosts"`
+	IpProviderConfig IpProviderConfig `json:"ipProvider"`
 
 	UpdateUrlConfig    UpdateUrlConfig    `json:"updateUrlConfig"`
 	GoDaddyConfig      GoDaddyConfig      `json:"goDaddyConfig"`
 	HetznerConfig      HetznerConfig      `json:"hetznerConfig"`
 	HetznerCloudConfig HetznerCloudConfig `json:"hetznerCloudConfig"`
+}
+
+type IpProviderConfig struct {
+	EnableUpnp     bool   `json:"enableUpnp"`
+	UpnpGateway    string `json:"upnpGateway"`
+	EnableExternal bool   `json:"enableExternal"`
 }
 
 type UpdateUrlConfig struct {
@@ -45,8 +51,11 @@ var EmptyConfig = Config{
 	Interval: "1h",
 	Domain:   "YOUR_DOMAIN",
 	Hosts:    []string{"HOST1", "HOST2"},
-	OnlyUPNP: false,
-
+	IpProviderConfig: IpProviderConfig{
+		EnableUpnp:     true,
+		UpnpGateway:    "",
+		EnableExternal: true,
+	},
 	UpdateUrlConfig: UpdateUrlConfig{
 		Url: "UPDATE_URL",
 	},

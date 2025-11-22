@@ -51,11 +51,13 @@ func InitializeServiceLocator(conf *models.Config) {
 		HttpClient: httpClient,
 	}
 
-	ipProviders := []api.IpApi{
-		upnpIpApi,
+	ipProviders := []api.IpApi{}
+
+	if conf.IpProviderConfig.EnableUpnp {
+		ipProviders = append(ipProviders, upnpIpApi)
 	}
 
-	if !conf.OnlyUPNP {
+	if conf.IpProviderConfig.EnableExternal {
 		ipProviders = append(ipProviders, externalIpProvider)
 	}
 

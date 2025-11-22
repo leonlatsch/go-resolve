@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/leonlatsch/go-resolve/internal/api"
@@ -14,6 +15,16 @@ type IpObserverService struct {
 	Apis   []api.IpApi
 	Config *models.Config
 	LastIp string
+}
+
+func (self *IpObserverService) PrintIpProviders() {
+	names := []string{}
+
+	for _, api := range self.Apis {
+		names = append(names, api.Name())
+	}
+
+	log.Printf("Configured IP Providers: %s", strings.Join(names, ", "))
 }
 
 func (self *IpObserverService) ObserveIp(callback func(ip string)) {

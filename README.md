@@ -19,7 +19,11 @@ ghcr.io/leonlatsch/go-resolve:latest
     "provider": "hetzner", // Available: updateUrl, goDaddy, hetzner, hetznerCloud
     "interval": "1h",
     "domain": "yourdomain.dom",
-    "onlyUpnp": false, // Disables fallback of obtaining IP via external services
+    "ipProvider": {
+        "enableUpnp": true, // Enable upnp ip resolving
+        "upnpGateway": "", // Manually specify a upnp gateway (your router). This is needed if the container is not running in netowrk mode host
+        "enableExternal": true // Enable external ip services // Enable external ip services
+    },
     "hosts": [
         "subdomain1",
         "subdomain2"
@@ -40,9 +44,3 @@ ghcr.io/leonlatsch/go-resolve:latest
     }
 }
 ```
-
-### UPNP
-
-go-resolve can resolve the public WAN IP via upnp from your gateway.
-
-This only works if you set the docker container in network mode host for now.
