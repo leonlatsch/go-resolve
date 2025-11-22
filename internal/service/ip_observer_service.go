@@ -55,15 +55,13 @@ func (self *IpObserverService) observePublicIp() chan string {
 				continue
 			}
 
-			foundAnyIp = true
-
 			if currentIp != self.LastIp {
-				log.Printf("Obtained new IP from %s", ipApi.Name())
-
 				ipChan <- currentIp
-
-				// Dont set self.LastIp, main waits for error and handles this
 			}
+
+			// Found a IP with this provider. Break the loop and dont try other providers
+			foundAnyIp = true
+			break
 		}
 
 		if !foundAnyIp {

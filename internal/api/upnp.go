@@ -13,7 +13,7 @@ import (
 )
 
 type UpnpIPAPI struct {
-	conf models.Config
+	Config *models.Config
 }
 
 var discoveredGateway string
@@ -31,8 +31,8 @@ var reqBody = `<?xml version="1.0" encoding="utf-8"?>
 
 func (api *UpnpIPAPI) GetPublicIpAddress() (string, error) {
 	if discoveredGateway == "" {
-		if api.conf.IpProviderConfig.UpnpGateway != "" {
-			discoveredGateway = api.conf.IpProviderConfig.UpnpGateway
+		if api.Config.IpProviderConfig.UpnpGateway != "" {
+			discoveredGateway = api.Config.IpProviderConfig.UpnpGateway
 		} else {
 			gw, err := gateway.DiscoverGateway()
 			if err != nil {

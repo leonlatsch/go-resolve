@@ -34,7 +34,9 @@ func InitializeServiceLocator(conf *models.Config) {
 		HttpClient: httpClient,
 	}
 
-	upnpIpApi := &api.UpnpIPAPI{}
+	upnpIpApi := &api.UpnpIPAPI{
+		Config: conf,
+	}
 
 	updateUrlApi := &api.UpdateUrlApiImpl{
 		Config:     conf,
