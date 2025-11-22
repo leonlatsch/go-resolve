@@ -39,6 +39,8 @@ func (self *IpObserverService) observePublicIp() chan string {
 		if err == nil && currentIp != self.LastIp {
 			ipChan <- currentIp
 			// Dont set self.LastIp, main waits for error and handles this
+		} else {
+			log.Println("Could not check for new ip:", err)
 		}
 	})
 

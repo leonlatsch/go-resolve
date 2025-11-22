@@ -34,6 +34,8 @@ func InitializeServiceLocator(conf *models.Config) {
 		HttpClient: httpClient,
 	}
 
+	upnpIpApi := &api.UpnpIPAPI{}
+
 	updateUrlApi := &api.UpdateUrlApiImpl{
 		Config:     conf,
 		HttpClient: httpClient,
@@ -50,7 +52,7 @@ func InitializeServiceLocator(conf *models.Config) {
 	}
 
 	ipObserverService := service.IpObserverService{
-		IpApi:  ipApi,
+		IpApi:  upnpIpApi,
 		Config: conf,
 	}
 
