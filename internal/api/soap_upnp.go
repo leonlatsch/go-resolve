@@ -3,9 +3,12 @@ package api
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"regexp"
+
+	"github.com/jackpal/gateway"
 )
 
 type UpnpIPAPI struct{}
@@ -17,9 +20,20 @@ var reqBody = `<?xml version="1.0" encoding="utf-8"?>
   </s:Body>
 </s:Envelope>`
 
+var discoveredGateway string
+
 func (api *UpnpIPAPI) GetPublicIpAddress() (string, error) {
+	if discoveredGateway == "" {
+		gw, err := gateway.DiscoverGateway()
+		if err != nil {
+			return "", err
+		}
+
+		discoveredGateway = gw.String()
+	}
+
 	req, _ := http.NewRequest("POST",
-		"http://10.10.0.1:49000/igdupnp/control/WANIPConn1",
+		fmt.Sprintf("http://%s:49000/igdupnp/control/WANIPConn1", discoveredGateway),
 		bytes.NewBufferString(reqBody))
 
 	req.Header.Set("Content-Type", `text/xml; charset="utf-8"`)
