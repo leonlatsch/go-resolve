@@ -52,7 +52,10 @@ func InitializeServiceLocator(conf *models.Config) {
 	}
 
 	ipObserverService := service.IpObserverService{
-		IpApi:  upnpIpApi,
+		Apis: []api.IpApi{
+			upnpIpApi,
+			ipApi,
+		},
 		Config: conf,
 	}
 

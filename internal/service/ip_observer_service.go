@@ -10,7 +10,7 @@ import (
 )
 
 type IpObserverService struct {
-	IpApi  api.IpApi
+	Apis   []api.IpApi
 	Config *models.Config
 	LastIp string
 }
@@ -35,12 +35,14 @@ func (self *IpObserverService) observePublicIp() chan string {
 	log.Println("Checking for new ip every " + self.Config.Interval)
 
 	go cron.Repeat(interval, func() {
-		currentIp, err := self.IpApi.GetPublicIpAddress()
-		if err == nil && currentIp != self.LastIp {
-			ipChan <- currentIp
-			// Dont set self.LastIp, main waits for error and handles this
-		} else {
-			log.Println("Could not check for new ip:", err)
+		for _, ipApi := range self.Apis {
+			currentIp, err := ipApi.GetPublicIpAddress()
+			if err == nil && currentIp != self.LastIp {
+				ipChan <- currentIp
+				// Dont set self.LastIp, main waits for error and handles this
+			} else {
+				log.Println("Could not get ip from ", err)
+			}
 		}
 	})
 

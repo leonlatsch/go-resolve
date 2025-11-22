@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"regexp"
 
@@ -13,14 +14,18 @@ import (
 
 type UpnpIPAPI struct{}
 
+var discoveredGateway string
+
+func (api *UpnpIPAPI) Name() string {
+	return "UPNP Interface at " + discoveredGateway
+}
+
 var reqBody = `<?xml version="1.0" encoding="utf-8"?>
 <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
   <s:Body>
     <u:GetExternalIPAddress xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1" />
   </s:Body>
 </s:Envelope>`
-
-var discoveredGateway string
 
 func (api *UpnpIPAPI) GetPublicIpAddress() (string, error) {
 	if discoveredGateway == "" {
@@ -29,6 +34,7 @@ func (api *UpnpIPAPI) GetPublicIpAddress() (string, error) {
 			return "", err
 		}
 
+		log.Println("Discovered Gateway for UPNP at " + gw.String())
 		discoveredGateway = gw.String()
 	}
 

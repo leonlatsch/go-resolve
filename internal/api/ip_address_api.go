@@ -16,11 +16,16 @@ var services = []string{
 }
 
 type IpApi interface {
+	Name() string
 	GetPublicIpAddress() (string, error)
 }
 
 type IpApiImpl struct {
 	HttpClient http.HttpClient
+}
+
+func (self *IpApiImpl) Name() string {
+	return "External Services"
 }
 
 func (self *IpApiImpl) GetPublicIpAddress() (string, error) {
