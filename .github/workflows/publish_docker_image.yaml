@@ -68,7 +68,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.ref_name }}
         run: |
-          go release create "$TAG" \
+          gh release create "$TAG" \
               --repo="$GITHUB_REPOSITORY"
               --title="$TAG" \
               --generate-notes
