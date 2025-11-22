@@ -9,8 +9,10 @@ import (
 	"github.com/leonlatsch/go-resolve/internal/service"
 )
 
+var Version = "dev"
+
 func main() {
-	log.Println("Starting Application")
+	log.Printf("Starting go-resolve %s\n", Version)
 	conf, err := config.GetConfig()
 	if err != nil {
 		log.Fatalln(err)

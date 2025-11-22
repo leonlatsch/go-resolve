@@ -1,36 +1,43 @@
-FROM golang:latest as builder
-# Define build env
-ENV GOOS linux
-ENV CGO_ENABLED 0
+# ---------- builder ----------
+# Use an ARG so GitHub Actions can pass the version string
+ARG VERSION
+FROM golang:latest AS builder
 
-# Add a work directory
+# make build args visible in this stage
+ARG VERSION
+
+# Build environment
+ENV GOOS=linux
+ENV CGO_ENABLED=0
+
 WORKDIR /build
 
-# Cache and install dependencies
+# Cache deps
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy app files
+# Copy sources
 COPY . .
 
-# Build app
-RUN go build -o app
+# Build the binary and inject VERSION into main.Version
+# Note: ensure your code declares `package main` and `var Version = "dev"`
+RUN go build -ldflags="-X 'main.Version=${VERSION}'" -o /build/app
 
-FROM alpine:latest as production
+# ---------- production ----------
+ARG VERSION
+FROM alpine:latest AS production
 
-# Add certificates
+# Add certificates for TLS
 RUN apk add --no-cache ca-certificates
 
 WORKDIR /go-resolve
-RUN mkdir config
+RUN mkdir -p config
+
+# Expose the version also as an environment variable (optional)
+ENV APP_VERSION=${VERSION}
 
 # Copy built binary from builder
-COPY --from=builder build/app .
-ENV GIN_MODE release
+COPY --from=builder /build/app .
 
-# Expose API port
-EXPOSE 9991
-
-# Exec built binary
-CMD ./app
-
+# Run the app
+CMD ["./app"]
