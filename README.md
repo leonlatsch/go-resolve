@@ -40,3 +40,9 @@ ghcr.io/leonlatsch/go-resolve:latest
     }
 }
 ```
+
+### UPNP
+
+go-resolve can resolve the public WAN IP via upnp from your gateway.
+
+This only works if you set the docker container in network mode host for now.
