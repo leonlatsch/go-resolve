@@ -60,6 +60,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
   create_release:
+    name: Create Release
+    runs-on: ubuntu-latest
     steps:
       - name: "Create release for tag"
         uses: actions/create-release@latest
