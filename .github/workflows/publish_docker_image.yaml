@@ -59,12 +59,13 @@ jobs:
             VERSION=${{ env.VERSION }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-    create_release:
-      name: "Create release for tag"
-      uses: actions/create-release@latest
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ github.ref }}
-        generate_release_notes: true
+  create_release:
+    name: "Create release for tag"
+    uses: actions/create-release@latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      tag_name: ${{ github.ref }}
+      release_name: ${{ github.ref }}
+      generate_release_notes: true
+
