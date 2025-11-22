@@ -35,6 +35,10 @@ func main() {
 
 	ipObserverService.PrintIpProviders()
 
+	if len(ipObserverService.Apis) == 0 {
+		log.Fatalln("No IP Providers are configured. Please see the README.md")
+	}
+
 	ipObserverService.ObserveIp(func(ip string) {
 		log.Println("New IP: " + ip + " | Notifying " + conf.Provider)
 		err := service.UpdateDns(ip)
