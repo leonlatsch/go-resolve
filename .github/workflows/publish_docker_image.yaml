@@ -69,6 +69,6 @@ jobs:
           TAG: ${{ github.ref_name }}
         run: |
           gh release create "$TAG" \
-              --repo="$GITHUB_REPOSITORY"
+              --repo="$GITHUB_REPOSITORY" \
               --title="$TAG" \
-              --generate-notes
+              --generate-notes \
