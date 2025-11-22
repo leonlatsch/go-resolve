@@ -5,6 +5,10 @@ type IpApiFake struct {
 	Error error
 }
 
-func (self *IpApiFake) GetPublicIpAddress() (string, error) {
-	return self.Ip, self.Error
+func (fake *IpApiFake) Name() string {
+	return "Fake IpAPi"
+}
+
+func (fake *IpApiFake) GetPublicIpAddress() (string, error) {
+	return fake.Ip, fake.Error
 }

@@ -17,7 +17,7 @@ type UpnpIPAPI struct{}
 var discoveredGateway string
 
 func (api *UpnpIPAPI) Name() string {
-	return "UPNP Interface at " + discoveredGateway
+	return "UPNP"
 }
 
 var reqBody = `<?xml version="1.0" encoding="utf-8"?>

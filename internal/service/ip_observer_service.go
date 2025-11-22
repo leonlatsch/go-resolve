@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -38,10 +39,11 @@ func (self *IpObserverService) observePublicIp() chan string {
 		for _, ipApi := range self.Apis {
 			currentIp, err := ipApi.GetPublicIpAddress()
 			if err == nil && currentIp != self.LastIp {
+				log.Printf("%s reported new IP", ipApi.Name())
 				ipChan <- currentIp
 				// Dont set self.LastIp, main waits for error and handles this
 			} else {
-				log.Println("Could not get ip from ", err)
+				log.Println(fmt.Sprintf("Could not get ip from %s. Trying next provider...", ipApi.Name()), err)
 			}
 		}
 	})
