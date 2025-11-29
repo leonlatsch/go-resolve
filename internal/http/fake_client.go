@@ -5,18 +5,18 @@ type FakeHttpClient struct {
 	Error    error
 }
 
-func (self *FakeHttpClient) Get(url string, headers map[string]string) (string, error) {
-	return self.RespBody, self.Error
+func (fake *FakeHttpClient) Get(url string, headers map[string]string) (string, error) {
+	return fake.RespBody, fake.Error
 }
 
-func (self *FakeHttpClient) Put(url string, headers map[string]string, body interface{}) (string, error) {
-	return self.RespBody, self.Error
+func (fake *FakeHttpClient) Put(url string, headers map[string]string, body any) (string, error) {
+	return fake.RespBody, fake.Error
 }
 
-func (self *FakeHttpClient) Post(url string, headers map[string]string, body interface{}) (string, error) {
-	return self.RespBody, self.Error
+func (fake *FakeHttpClient) Post(url string, headers map[string]string, body any) (string, error) {
+	return fake.RespBody, fake.Error
 }
 
-func (self *FakeHttpClient) Patch(url string, headers map[string]string, body interface{}) (string, error) {
-	return self.RespBody, self.Error
+func (fake *FakeHttpClient) Patch(url string, headers map[string]string, body any) (string, error) {
+	return fake.RespBody, fake.Error
 }

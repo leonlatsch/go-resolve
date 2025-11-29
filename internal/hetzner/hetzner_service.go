@@ -2,7 +2,6 @@ package hetzner
 
 import (
 	"errors"
-	"fmt"
 	"log"
 
 	"github.com/leonlatsch/go-resolve/internal/models"
@@ -17,7 +16,7 @@ type HetznerService struct {
 
 func (service *HetznerService) UpdateDns(ip string) error {
 	if len(service.RecordIds) <= 0 {
-		return errors.New("No records ids loaded. Not updating.")
+		return errors.New("no records ids loaded. Not updating")
 	}
 
 	records := []Record{}
@@ -32,7 +31,7 @@ func (service *HetznerService) UpdateDns(ip string) error {
 		records = append(records, record)
 	}
 
-	log.Println(fmt.Sprintf("Updating %v records for %v", len(records), service.Config.Domain))
+	log.Printf("updating %v records for %v", len(records), service.Config.Domain)
 	if err := service.HetznerApi.BulkUpdate(records); err != nil {
 		return err
 	}
@@ -59,7 +58,7 @@ func (service *HetznerService) Initialize() error {
 	}
 
 	if len(recordIds) <= 0 {
-		return errors.New("Could not find configured records in dns entries")
+		return errors.New("could not find configured records in dns entries")
 	}
 
 	service.RecordIds = recordIds

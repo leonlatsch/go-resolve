@@ -23,9 +23,9 @@ type GodaddyApiImpl struct {
 
 const BASE_URL = "https://api.godaddy.com/v1"
 
-func (self *GodaddyApiImpl) GetDomainDetail() (DomainDetail, error) {
+func (api *GodaddyApiImpl) GetDomainDetail() (DomainDetail, error) {
 	var detail DomainDetail
-	json, err := self.HttpClient.Get(self.endpointDomainDetail(), self.getAuthHeaders())
+	json, err := api.HttpClient.Get(api.endpointDomainDetail(), api.getAuthHeaders())
 	if err != nil {
 		return detail, err
 	}
@@ -37,10 +37,9 @@ func (self *GodaddyApiImpl) GetDomainDetail() (DomainDetail, error) {
 	return detail, nil
 }
 
-func (self *GodaddyApiImpl) GetRecords(host string) ([]DnsRecord, error) {
+func (api *GodaddyApiImpl) GetRecords(host string) ([]DnsRecord, error) {
 	var records []DnsRecord
-	recordsJson, err := self.HttpClient.Get(self.endpointARecords(host), self.getAuthHeaders())
-
+	recordsJson, err := api.HttpClient.Get(api.endpointARecords(host), api.getAuthHeaders())
 	if err != nil {
 		return records, err
 	}
@@ -52,42 +51,42 @@ func (self *GodaddyApiImpl) GetRecords(host string) ([]DnsRecord, error) {
 	return records, nil
 }
 
-func (self *GodaddyApiImpl) CreateRecord(record DnsRecord) error {
-	log.Println("Creating " + record.Name + "." + self.Config.Domain + " -> " + record.Data)
+func (api *GodaddyApiImpl) CreateRecord(record DnsRecord) error {
+	log.Println("Creating " + record.Name + "." + api.Config.Domain + " -> " + record.Data)
 	records := []DnsRecord{record}
 
-	if _, err := self.HttpClient.Patch(self.endpointRecords(""), self.getAuthHeaders(), records); err != nil {
+	if _, err := api.HttpClient.Patch(api.endpointRecords(""), api.getAuthHeaders(), records); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (self *GodaddyApiImpl) UpdateRecord(record DnsRecord) error {
-	log.Println("Updating " + record.Name + "." + self.Config.Domain + " -> " + record.Data)
+func (api *GodaddyApiImpl) UpdateRecord(record DnsRecord) error {
+	log.Println("Updating " + record.Name + "." + api.Config.Domain + " -> " + record.Data)
 	records := []DnsRecord{record}
 
-	if _, err := self.HttpClient.Put(self.endpointARecords(record.Name), self.getAuthHeaders(), records); err != nil {
+	if _, err := api.HttpClient.Put(api.endpointARecords(record.Name), api.getAuthHeaders(), records); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (self *GodaddyApiImpl) endpointRecords(host string) string {
-	return BASE_URL + fmt.Sprintf("/domains/%s/records/%s", self.Config.Domain, host)
+func (api *GodaddyApiImpl) endpointRecords(host string) string {
+	return BASE_URL + fmt.Sprintf("/domains/%s/records/%s", api.Config.Domain, host)
 }
 
-func (self *GodaddyApiImpl) endpointARecords(host string) string {
-	return BASE_URL + fmt.Sprintf("/domains/%s/records/A/%s", self.Config.Domain, host)
+func (api *GodaddyApiImpl) endpointARecords(host string) string {
+	return BASE_URL + fmt.Sprintf("/domains/%s/records/A/%s", api.Config.Domain, host)
 }
 
-func (self *GodaddyApiImpl) endpointDomainDetail() string {
-	return BASE_URL + fmt.Sprintf("/domains/%s", self.Config.Domain)
+func (api *GodaddyApiImpl) endpointDomainDetail() string {
+	return BASE_URL + fmt.Sprintf("/domains/%s", api.Config.Domain)
 }
 
-func (self *GodaddyApiImpl) getAuthHeaders() map[string]string {
+func (api *GodaddyApiImpl) getAuthHeaders() map[string]string {
 	headers := make(map[string]string)
-	headers["Authorization"] = "sso-key " + self.Config.GoDaddyConfig.ApiKey + ":" + self.Config.GoDaddyConfig.ApiSecret
+	headers["Authorization"] = "sso-key " + api.Config.GoDaddyConfig.ApiKey + ":" + api.Config.GoDaddyConfig.ApiSecret
 	return headers
 }

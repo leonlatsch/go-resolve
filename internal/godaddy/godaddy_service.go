@@ -2,7 +2,6 @@ package godaddy
 
 import (
 	"errors"
-	"fmt"
 	"log"
 
 	"github.com/leonlatsch/go-resolve/internal/models"
@@ -53,7 +52,7 @@ func (service *GodaddyService) UpdateDns(ip string) error {
 	}
 
 	if failed > 0 {
-		return errors.New("Could not update all records")
+		return errors.New("could not update all records")
 	}
 
 	return nil
@@ -66,14 +65,12 @@ func (service *GodaddyService) Initialize() error {
 		return err
 	}
 
-	log.Println(
-		fmt.Sprintf(
-			"Config valid. Running for domain %s maintained by %s %s (%s)",
-			domainDetail.Domain,
-			domainDetail.ContactAdmin.FirstName,
-			domainDetail.ContactAdmin.LastName,
-			domainDetail.ContactAdmin.Email,
-		),
+	log.Printf(
+		"Config valid. Running for domain %s maintained by %s %s (%s)",
+		domainDetail.Domain,
+		domainDetail.ContactAdmin.FirstName,
+		domainDetail.ContactAdmin.LastName,
+		domainDetail.ContactAdmin.Email,
 	)
 
 	return nil

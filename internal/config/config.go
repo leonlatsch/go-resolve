@@ -20,7 +20,11 @@ const (
 // Get the config as pointer. Value updates when file changes
 func GetConfig() (*models.Config, error) {
 	if !configExists() {
-		createEmptyConfig()
+		err := createEmptyConfig()
+		if err != nil {
+			return nil, err
+		}
+
 		return nil, errors.New("no Config. Creating empty config and exiting")
 	}
 
@@ -43,7 +47,7 @@ func SaveConfig(conf models.Config) error {
 		return err
 	}
 
-	os.Mkdir(CONFIG_DIR, 0o755) // Ignore err. Just try every time
+	_ = os.Mkdir(CONFIG_DIR, 0o755) // Ignore error. Try to create every time
 	if err := os.WriteFile(CONFIG_FILE, []byte(confJson), CONFIG_FILE_MODE); err != nil {
 		return err
 	}

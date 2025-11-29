@@ -68,7 +68,10 @@ func TestOnIpChanged(t *testing.T) {
 		// host1 should be updated and host2 should be created
 
 		newIp := "123.123.123.123"
-		service.UpdateDns(newIp)
+		err := service.UpdateDns(newIp)
+		if err != nil {
+			t.Error("Service.updateDns threw an error", err)
+		}
 
 		expectedUpdatedRecord := godaddy.DnsRecord{
 			Data: newIp,

@@ -26,7 +26,7 @@ func (service *UpdateUrlService) UpdateDns(ip string) error {
 	}
 
 	if failed > 0 {
-		return errors.New("Cloud not update all records")
+		return errors.New("cloud not update all records")
 	}
 
 	return nil

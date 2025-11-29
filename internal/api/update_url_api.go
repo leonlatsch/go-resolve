@@ -16,14 +16,13 @@ type UpdateUrlApiImpl struct {
 	HttpClient http.HttpClient
 }
 
-func (self *UpdateUrlApiImpl) CallUpdateUrl(host string) error {
-	url := strings.ReplaceAll(self.Config.UpdateUrlConfig.Url, "<host>", host)
-	url = strings.ReplaceAll(url, "<domain>", self.Config.Domain)
-	_, err := self.HttpClient.Get(url, nil)
+func (api *UpdateUrlApiImpl) CallUpdateUrl(host string) error {
+	url := strings.ReplaceAll(api.Config.UpdateUrlConfig.Url, "<host>", host)
+	url = strings.ReplaceAll(url, "<domain>", api.Config.Domain)
+	_, err := api.HttpClient.Get(url, nil)
 	if err != nil {
 		return err
 	}
 
 	return nil
-
 }

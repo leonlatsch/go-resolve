@@ -17,18 +17,18 @@ type IpObserverService struct {
 	LastIp string
 }
 
-func (self *IpObserverService) PrintIpProviders() {
+func (service *IpObserverService) PrintIpProviders() {
 	names := []string{}
 
-	for _, api := range self.Apis {
+	for _, api := range service.Apis {
 		names = append(names, api.Name())
 	}
 
 	log.Printf("Configured IP Providers: %s", strings.Join(names, ", "))
 }
 
-func (self *IpObserverService) ObserveIp(callback func(ip string)) {
-	ipChan := self.observePublicIp()
+func (service *IpObserverService) ObserveIp(callback func(ip string)) {
+	ipChan := service.observePublicIp()
 
 	for {
 		ip := <-ipChan
@@ -36,26 +36,26 @@ func (self *IpObserverService) ObserveIp(callback func(ip string)) {
 	}
 }
 
-func (self *IpObserverService) observePublicIp() chan string {
+func (service *IpObserverService) observePublicIp() chan string {
 	ipChan := make(chan string)
-	interval, err := time.ParseDuration(self.Config.Interval)
+	interval, err := time.ParseDuration(service.Config.Interval)
 	if err != nil {
 		log.Println("Could not read retry interval from config. Using fallback 1h")
 		interval = time.Hour
 	}
 
-	log.Println("Checking for new ip every " + self.Config.Interval)
+	log.Println("Checking for new ip every " + service.Config.Interval)
 
 	go cron.Repeat(interval, func() {
 		foundAnyIp := false
-		for _, ipApi := range self.Apis {
+		for _, ipApi := range service.Apis {
 			currentIp, err := ipApi.GetPublicIpAddress()
 			if err != nil {
 				log.Println(fmt.Sprintf("Could not get ip from %s:", ipApi.Name()), err)
 				continue
 			}
 
-			if currentIp != self.LastIp {
+			if currentIp != service.LastIp {
 				ipChan <- currentIp
 			}
 

@@ -13,7 +13,7 @@ var stdHttpClient = &http.Client{}
 
 type RealHttpClient struct{}
 
-func (self *RealHttpClient) Get(url string, headers map[string]string) (string, error) {
+func (client *RealHttpClient) Get(url string, headers map[string]string) (string, error) {
 	respBody, err := request("GET", url, headers, nil)
 	if err != nil {
 		return "", err
@@ -22,7 +22,7 @@ func (self *RealHttpClient) Get(url string, headers map[string]string) (string, 
 	return respBody, nil
 }
 
-func (self *RealHttpClient) Put(url string, headers map[string]string, requestBody interface{}) (string, error) {
+func (client *RealHttpClient) Put(url string, headers map[string]string, requestBody any) (string, error) {
 	respBody, err := request("PUT", url, headers, requestBody)
 	if err != nil {
 		return "", err
@@ -31,7 +31,7 @@ func (self *RealHttpClient) Put(url string, headers map[string]string, requestBo
 	return respBody, nil
 }
 
-func (self *RealHttpClient) Post(url string, headers map[string]string, requestBody interface{}) (string, error) {
+func (client *RealHttpClient) Post(url string, headers map[string]string, requestBody any) (string, error) {
 	respBody, err := request("POST", url, headers, requestBody)
 	if err != nil {
 		return "", err
@@ -40,7 +40,7 @@ func (self *RealHttpClient) Post(url string, headers map[string]string, requestB
 	return respBody, nil
 }
 
-func (self *RealHttpClient) Patch(url string, headers map[string]string, requestBody interface{}) (string, error) {
+func (client *RealHttpClient) Patch(url string, headers map[string]string, requestBody any) (string, error) {
 	respBody, err := request("PATCH", url, headers, requestBody)
 	if err != nil {
 		return "", err
@@ -50,7 +50,7 @@ func (self *RealHttpClient) Patch(url string, headers map[string]string, request
 }
 
 // Makes a request with the specified method, headers, etc. Decodes the respbody body to a json string
-func request(method string, url string, headers map[string]string, body interface{}) (string, error) {
+func request(method string, url string, headers map[string]string, body any) (string, error) {
 	// Serialize req body
 	reqBody, err := serialization.ToJson(body)
 	if err != nil {
