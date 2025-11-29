@@ -7,8 +7,6 @@ import (
 
 func Repeat(duration time.Duration, f func()) {
 	var lock sync.Mutex
-	timer := time.NewTicker(duration)
-	defer timer.Stop()
 
 	job := func() {
 		lock.Lock()
@@ -16,11 +14,8 @@ func Repeat(duration time.Duration, f func()) {
 		f()
 	}
 
-	// Repeat once timer ticks
 	for {
-		select {
-		case <-timer.C:
-			go job()
-		}
+		time.Sleep(duration)
+		job()
 	}
 }
