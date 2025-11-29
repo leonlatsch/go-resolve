@@ -11,15 +11,17 @@ import (
 	"github.com/leonlatsch/go-resolve/internal/serialization"
 )
 
-const CONFIG_DIR = "config"
-const CONFIG_FILE = CONFIG_DIR + "/" + "config.json"
-const CONFIG_FILE_MODE = 0644
+const (
+	CONFIG_DIR       = "config"
+	CONFIG_FILE      = CONFIG_DIR + "/" + "config.json"
+	CONFIG_FILE_MODE = 0o644
+)
 
 // Get the config as pointer. Value updates when file changes
 func GetConfig() (*models.Config, error) {
 	if !configExists() {
 		createEmptyConfig()
-		return nil, errors.New("No Config. Creating empty config and exiting.")
+		return nil, errors.New("no Config. Creating empty config and exiting")
 	}
 
 	config, err := loadConfig()
@@ -41,7 +43,7 @@ func SaveConfig(conf models.Config) error {
 		return err
 	}
 
-	os.Mkdir(CONFIG_DIR, CONFIG_FILE_MODE) // Ignore err. Just try every time
+	os.Mkdir(CONFIG_DIR, 0o755) // Ignore err. Just try every time
 	if err := os.WriteFile(CONFIG_FILE, []byte(confJson), CONFIG_FILE_MODE); err != nil {
 		return err
 	}
@@ -53,7 +55,6 @@ func SaveConfig(conf models.Config) error {
 func loadConfig() (models.Config, error) {
 	var config models.Config
 	buf, err := os.ReadFile(CONFIG_FILE)
-
 	if err != nil {
 		return config, err
 	}
