@@ -39,16 +39,7 @@ func main() {
 		log.Fatalln("No IP Providers are configured. Please see the README.md")
 	}
 
-	ipObserverService.ObserveIp(func(ip string) {
-		log.Println("New IP: " + ip + " | Notifying " + conf.Provider)
-		err := service.UpdateDns(ip)
-		if err != nil {
-			log.Println("Not caching ip: ", err)
-		} else {
-			log.Println("Successfully updated all records. Caching " + ip)
-			ipObserverService.LastIp = ip
-		}
-	})
+	ipObserverService.ObserveIpAndNotify(service)
 }
 
 func createDnsService(conf *models.Config) (service.DnsModeService, error) {
