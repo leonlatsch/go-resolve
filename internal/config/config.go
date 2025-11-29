@@ -11,8 +11,6 @@ import (
 	"github.com/leonlatsch/go-resolve/internal/serialization"
 )
 
-// TEST
-
 const (
 	CONFIG_DIR       = "config"
 	CONFIG_FILE      = CONFIG_DIR + "/" + "config.json"
