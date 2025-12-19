@@ -22,7 +22,7 @@ ghcr.io/leonlatsch/go-resolve:latest
     "ipProvider": {
         "enableUpnp": true, // Enable upnp ip resolving
         "upnpGateway": "", // Manually specify a upnp gateway (your router). This is needed if the container is not running in netowrk mode host
-        "enableExternal": true // Enable external ip services // Enable external ip services
+        "enableExternal": true // Enable external ip services
     },
     "hosts": [
         "subdomain1",
